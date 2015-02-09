@@ -1,0 +1,54 @@
+<polymer-element name="translate-text" attributes="from to" from="de" to="en">
+  <template></template>
+  <script defer src="../SmartComposition/xhrq.js"></script>
+  <script>
+    Polymer({
+      isSmartComponent: true,
+      publish: {
+        from: { value: "de", reflect: true },
+        to:   { value: "en", reflect: true }
+      },
+      fromChanged: function(old) {
+        this._pubsub_unsubscribe('text_' + old);
+        this._pubsub_subscribe('text_' + this.from);
+      },
+      created: function() {
+        this._pubsub_subscribe('text_' + this.from);
+        this.getToken();
+      },
+      getToken: function(skipCache, callback) {
+        var _this = this;
+        window.xhrq.post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', function(data) {
+          if (typeof data === 'object') {
+            _this._accessToken = data.access_token;
+            if (typeof callback === 'function') callback.call(_this);
+          } else {
+            if (!skipCache) _this.getToken(true);
+          }
+        }, {
+          client_id: "chroomaplus",
+          client_secret: "DFmEPSjKACNI6XQzYC11UTzXiBAeJHsDe8o7ztVb5Pc=",
+          scope: "http://api.microsofttranslator.com",
+          grant_type: "client_credentials"
+        }, 'json', skipCache);
+      },
+      messageReceived: function(message) {
+        if (typeof message.data !== 'string' || !this._accessToken) return;
+        var _this = this;
+        window.xhrq.get('http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=', function(data) {
+          if (~data.indexOf('ArgumentException')) {
+            _this._accessToken = null;
+            _this.getToken(true, function() { _this.messageReceived(message); });
+            return;
+          }
+          _this._pubsub_sendMessage('text_' + _this.to, data);
+        }, {
+          appId : 'Bearer ' + this._accessToken,
+          from : this.from,
+          to : this.to,
+          text : message.data
+        }, 'json');
+      }
+    });
+  </script>
+</polymer-element>
