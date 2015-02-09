@@ -1,0 +1,28 @@
+<polymer-element name="wikipedia-extract">
+  <template>
+    <div id="container"></div>
+  </template>
+  <script defer src="../SmartComposition/xhrq.js"></script>
+  <script>
+    Polymer({
+      isSmartComponent: true,
+      created: function() {
+        this._pubsub_subscribe('wiki');
+      },
+      messageReceived: function(message) {
+        if (typeof message.data !== 'string') return;
+        var _this = this;
+        window.xhrq.get('http://en.wikipedia.org/w/api.php?action=query&redirects', function(data) {
+          var extract = data.query.pages[Object.keys(data.query.pages)[0]].extract;
+          if (!extract) return;
+          _this.$.container.innerHTML = extract;
+        }, {
+          titles: message.data,
+          prop: 'extracts',
+          exintro: '',
+          format: 'json'
+        }, 'json');
+      }
+    });
+  </script>
+</polymer-element>
