@@ -6,6 +6,9 @@
   <link rel="import" href="../polymer/dist/polymer.html">
   <link rel="import" href="my-counter-element.html">
   <link rel="import" href="google-map-element.html">
+  <link rel="import" href="smart-video-element.html">
+  <link rel="import" href="translate-text-element.html">
+  <link rel="import" href="semantic-extraction-element.html">
 </head>
 <body>
 <my-counter counter="10">Points</my-counter>
@@ -13,6 +16,13 @@
 <br>
 <google-map width="200" height="400"></google-map>
 <google-map width="400" height="400" address="Chemnitz" zoom="12"></google-map>
+<br>
+<smart-video width="550" height="300">
+  <source src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/TV-20140307-0222-2601.webm.h264.mp4" type="video/mp4" />
+  <track src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/tagesschau-20140307.vtt" label="Metadata" kind="metadata" default />
+</smart-video>
+<translate-text from="de" to="en"></translate-text>
+<semantic-extraction></semantic-extraction>
 <script async defer src="../SmartComposition/SynchronizationService.js"></script>
 </body>
 </html>
