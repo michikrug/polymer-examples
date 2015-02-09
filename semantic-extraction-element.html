@@ -1,0 +1,43 @@
+<polymer-element name="semantic-extraction">
+  <template></template>
+  <script defer src="../SmartComposition/xhrq.js"></script>
+  <script>
+    Polymer({
+      isSmartComponent: true,
+      apikey: 'b9543ff024368b60add72be32a27d69ad40b51fc',
+      created: function() {
+        this._pubsub_subscribe('text_en');
+      },
+      messageReceived: function(message) {
+        if (typeof message.data !== 'string') return;
+        var _this = this;
+        var url = 'http://access.alchemyapi.com/calls/text/TextGetRankedNamedEntities';
+        window.xhrq.get(url, function (data) {
+          data.entities && data.entities.forEach(function(entity) {
+            entity.text = entity.text.replace('.','');
+            switch(entity.type) {
+              case 'City':
+              case 'Country':
+              case 'Continent':
+              case 'StateOrCounty':
+              case 'GeographicFeature':
+                _this._pubsub_sendMessage('address', entity.text, _this._pubsub_lastMessage.token);
+                _this._pubsub_sendMessage('image', entity.text, _this._pubsub_lastMessage.token);
+                _this._pubsub_sendMessage('wiki', entity.text, _this._pubsub_lastMessage.token);
+                break;
+              case 'Person':
+              case 'Company':
+              case 'Organization':
+                _this._pubsub_sendMessage('tweets', entity.text, _this._pubsub_lastMessage.token);
+                _this._pubsub_sendMessage('image', entity.text, _this._pubsub_lastMessage.token);
+                _this._pubsub_sendMessage('wiki', entity.text, _this._pubsub_lastMessage.token);
+                break;
+              default:
+                break;
+            }
+          });
+        }, { apikey: this.apikey, outputMode: 'json', text: message.data }, 'json');
+      }
+    });
+  </script>
+</polymer-element>
