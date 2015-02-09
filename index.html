@@ -5,10 +5,14 @@
   <script src="../webcomponentsjs/dist/webcomponents.min.js"></script>
   <link rel="import" href="../polymer/dist/polymer.html">
   <link rel="import" href="my-counter-element.html">
+  <link rel="import" href="google-map-element.html">
 </head>
 <body>
 <my-counter counter="10">Points</my-counter>
 <my-counter counter="12">Punkte</my-counter>
-<script src="../SmartComposition/SynchronizationService.js"></script>
+<br>
+<google-map width="200" height="400"></google-map>
+<google-map width="400" height="400" address="Chemnitz" zoom="12"></google-map>
+<script async defer src="../SmartComposition/SynchronizationService.js"></script>
 </body>
 </html>

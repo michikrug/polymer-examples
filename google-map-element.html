@@ -1,0 +1,119 @@
+<polymer-element name="google-map" attributes="width height lat lng zoom address" zoom="6" width="300" height="300" lat="51" lng="11">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      :host #gmap {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        position: relative;
+      }
+    </style>
+    <div id="gmap"></div>
+  </template>
+  <script>
+    window.addEventListener('load', function() {
+      window.loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
+    });
+    window.gmapsLoaded = function() {
+      window.dispatchEvent(new Event('gmapsLoaded'));
+    };
+
+    Polymer({
+      isSmartComponent: true,
+      publish: {
+        width:   { reflect: true },
+        height:  { reflect: true },
+        lat:     { value: 51, reflect: true },
+        lng:     { value: 11, reflect: true },
+        zoom:    { value: 6, reflect: true },
+        address: { reflect: true }
+      },
+      latChanged: function() {
+        this._map && this._map.setCenter({ lat: this.lat, lng: this.lng });
+      },
+      lngChanged: function() {
+        this._map && this._map.setCenter({ lat: this.lat, lng: this.lng });
+      },
+      zoomChanged: function() {
+        this._map && this._map.setZoom(this.zoom);
+      },
+      widthChanged: function() {
+        this.style.width = this.width + "px";
+        this.$.gmap.dispatchEvent(new Event('resize'));
+      },
+      heightChanged: function() {
+        this.style.height = this.height + "px";
+        this.$.gmap.dispatchEvent(new Event('resize'));
+      },
+      addressChanged: function() {
+        this.queryAddress(this.address);
+      },
+      created: function() {
+        var _this = this;
+
+        window.addEventListener('gmapsLoaded', function() {
+          _this.createMap();
+        });
+
+        if (typeof google !== 'object' || !google.maps) {
+          window.loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
+        }
+
+        this._pubsub_subscribe(['coordinates', 'address']);
+      },
+      attached: function() {
+        this.createMap();
+      },
+      createMap: function() {
+        var _this = this, gmap = this.$.gmap;
+        if (typeof google !== 'object' || !google.maps || this._map) return;
+
+        this._geocoder = new google.maps.Geocoder();
+        this._map = new google.maps.Map(gmap, { zoom: this.zoom, disableDefaultUI: true, mapTypeControl: true });
+
+        if (this.address) this.queryAddress(this.address);
+
+        google.maps.event.addListener(this._map, 'dragend', function() {
+          var center = this.getCenter();
+          _this.lat = center.lat();
+          _this.lng = center.lng();
+          _this._pubsub_sendMessage({ topic: 'coordinates', data: { lat: _this.lat, lng: _this.lng }});
+        });
+
+        google.maps.event.addListener(this._map, 'zoom_changed', function() {
+          _this.zoom = this.getZoom();
+        });
+
+        gmap.addEventListener('resize', function() {
+          google.maps.event.trigger(_this._map, 'resize');
+          _this._map.setCenter({ lat: _this.lat, lng: _this.lng });
+        });
+
+        gmap.dispatchEvent(new Event('resize'));
+      },
+      queryAddress: function(address) {
+        var _this = this;
+        if (!this._geocoder) return;
+        this._geocoder.geocode({ 'address': address }, function(results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+            var center = results[0].geometry.location;
+            _this.lat = center.lat();
+            _this.lng = center.lng();
+          }
+        });
+      },
+      messageReceived: function(message) {
+        if (message.topic === 'coordinates' && message.data.lat && message.data.lng) {
+          this.lat = message.data.lat;
+          this.lng = message.data.lng;
+        }
+        if (message.topic === 'address' && typeof message.data === 'string') {
+          this.address = message.data;
+        }
+      }
+    });
+  </script>
+</polymer-element>
