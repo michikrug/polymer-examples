@@ -30,7 +30,7 @@
         this._pubsub_listening = false;
         this._ready = false;
         this._isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-        this._pubsub_subscribe('time');
+        this._pubsub_subscribe('time', this.timeReceived);
       },
       attached: function() {
         this.initVideo();
@@ -109,8 +109,8 @@
           if (!_this._isFirefox) textTrack.addEventListener('cuechange', _this.cueChanged);
         });
       },
-      messageReceived: function(message) {
-        if (message.topic === 'time' && parseInt(message.data) > 0 && this._ready) {
+      timeReceived: function(message) {
+        if (parseInt(message.data) > 0 && this._ready) {
           this._video.currentTime = parseInt(message.data);
         }
       }

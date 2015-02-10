@@ -7,9 +7,9 @@
     Polymer({
       isSmartComponent: true,
       created: function() {
-        this._pubsub_subscribe('wiki');
+        this._pubsub_subscribe('wiki', this.queryReceived);
       },
-      messageReceived: function(message) {
+      queryReceived: function(message) {
         if (typeof message.data !== 'string') return;
         var _this = this;
         window.xhrq.get('http://en.wikipedia.org/w/api.php?action=query&redirects', function(data) {

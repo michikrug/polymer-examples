@@ -9,11 +9,11 @@
         to:   { value: "en", reflect: true }
       },
       fromChanged: function(old) {
-        this._pubsub_unsubscribe('text_' + old);
-        this._pubsub_subscribe('text_' + this.from);
+        this._pubsub_unsubscribe('text_' + old, this.textReceived);
+        this._pubsub_subscribe('text_' + this.from, this.textReceived);
       },
       created: function() {
-        this._pubsub_subscribe('text_' + this.from);
+        this._pubsub_subscribe('text_' + this.from, this.textReceived);
         this.getToken();
       },
       getToken: function(skipCache, callback) {
@@ -32,13 +32,13 @@
           grant_type: "client_credentials"
         }, 'json', skipCache);
       },
-      messageReceived: function(message) {
+      textReceived: function(message) {
         if (typeof message.data !== 'string' || !this._accessToken) return;
         var _this = this;
         window.xhrq.get('http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=', function(data) {
           if (~data.indexOf('ArgumentException')) {
             _this._accessToken = null;
-            _this.getToken(true, function() { _this.messageReceived(message); });
+            _this.getToken(true, function() { _this.textReceived(message); });
             return;
           }
           _this._pubsub_sendMessage('text_' + _this.to, data);

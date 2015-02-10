@@ -6,9 +6,9 @@
       isSmartComponent: true,
       apikey: 'b9543ff024368b60add72be32a27d69ad40b51fc',
       created: function() {
-        this._pubsub_subscribe('text_en');
+        this._pubsub_subscribe('text_en', this.textReceived);
       },
-      messageReceived: function(message) {
+      textReceived: function(message, token) {
         if (typeof message.data !== 'string') return;
         var _this = this;
         var url = 'http://access.alchemyapi.com/calls/text/TextGetRankedNamedEntities';
@@ -21,16 +21,16 @@
               case 'Continent':
               case 'StateOrCounty':
               case 'GeographicFeature':
-                _this._pubsub_sendMessage('address', entity.text, _this._pubsub_lastMessage.token);
-                _this._pubsub_sendMessage('image', entity.text, _this._pubsub_lastMessage.token);
-                _this._pubsub_sendMessage('wiki', entity.text, _this._pubsub_lastMessage.token);
+                _this._pubsub_sendMessage('address', entity.text, token);
+                _this._pubsub_sendMessage('image', entity.text, token);
+                _this._pubsub_sendMessage('wiki', entity.text, token);
                 break;
               case 'Person':
               case 'Company':
               case 'Organization':
-                _this._pubsub_sendMessage('tweets', entity.text, _this._pubsub_lastMessage.token);
-                _this._pubsub_sendMessage('image', entity.text, _this._pubsub_lastMessage.token);
-                _this._pubsub_sendMessage('wiki', entity.text, _this._pubsub_lastMessage.token);
+                _this._pubsub_sendMessage('tweets', entity.text, token);
+                _this._pubsub_sendMessage('image', entity.text, token);
+                _this._pubsub_sendMessage('wiki', entity.text, token);
                 break;
               default:
                 break;

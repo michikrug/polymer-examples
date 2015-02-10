@@ -62,7 +62,8 @@
           window.loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
         }
 
-        this._pubsub_subscribe(['coordinates', 'address']);
+        this._pubsub_subscribe('coordinates', this.coordinatesReceived);
+        this._pubsub_subscribe('address', this.addressReceived);
       },
       attached: function() {
         this.createMap();
@@ -80,7 +81,7 @@
           var center = this.getCenter();
           _this.lat = center.lat();
           _this.lng = center.lng();
-          _this._pubsub_sendMessage({ topic: 'coordinates', data: { lat: _this.lat, lng: _this.lng }});
+          _this._pubsub_sendMessage('coordinates', { lat: _this.lat, lng: _this.lng });
         });
 
         google.maps.event.addListener(this._map, 'zoom_changed', function() {
@@ -105,12 +106,14 @@
           }
         });
       },
-      messageReceived: function(message) {
-        if (message.topic === 'coordinates' && message.data.lat && message.data.lng) {
+      coordinatesReceived: function(message) {
+        if (message.data.lat && message.data.lng) {
           this.lat = message.data.lat;
           this.lng = message.data.lng;
         }
-        if (message.topic === 'address' && typeof message.data === 'string') {
+      },
+      addressReceived: function(message) {
+        if (typeof message.data === 'string') {
           this.address = message.data;
         }
       }
