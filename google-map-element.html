@@ -1,4 +1,4 @@
-<polymer-element name="google-map" attributes="width height lat lng zoom address" zoom="6" width="300" height="300" lat="51" lng="11">
+<polymer-element name="google-map" attributes="width height lat lng zoom address" zoom="6" lat="51" lng="11">
   <template>
     <style>
       :host {
@@ -24,8 +24,6 @@
     Polymer({
       isSmartComponent: true,
       publish: {
-        width:   { reflect: true },
-        height:  { reflect: true },
         lat:     { value: 51, reflect: true },
         lng:     { value: 11, reflect: true },
         zoom:    { value: 6, reflect: true },
@@ -39,14 +37,6 @@
       },
       zoomChanged: function() {
         this._map && this._map.setZoom(this.zoom);
-      },
-      widthChanged: function() {
-        this.style.width = this.width + "px";
-        this.$.gmap.dispatchEvent(new Event('resize'));
-      },
-      heightChanged: function() {
-        this.style.height = this.height + "px";
-        this.$.gmap.dispatchEvent(new Event('resize'));
       },
       addressChanged: function() {
         this.queryAddress(this.address);
@@ -62,11 +52,19 @@
           window.loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
         }
 
+        this._style_observer = new MutationObserver(function(mutations) {
+          _this.$.gmap.dispatchEvent(new Event('resize'));
+        });
+
         this._pubsub_subscribe('coordinates', this.coordinatesReceived);
         this._pubsub_subscribe('address', this.addressReceived);
       },
       attached: function() {
+        this._style_observer.observe(this, { attributes : true, attributeFilter : ['style'] });
         this.createMap();
+      },
+      detached: function() {
+        this._style_observer.disconnect();
       },
       createMap: function() {
         var _this = this, gmap = this.$.gmap;
