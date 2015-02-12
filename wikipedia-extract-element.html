@@ -1,5 +1,16 @@
 <polymer-element name="wikipedia-extract" attributes="query">
   <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      :host #container {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        position: relative;
+      }
+    </style>
     <div id="container"></div>
   </template>
   <script defer src="../SmartComposition/xhrq.js"></script>
