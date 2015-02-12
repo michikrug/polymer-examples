@@ -10,6 +10,7 @@
   <link rel="import" href="translate-text-element.html">
   <link rel="import" href="semantic-extraction-element.html">
   <link rel="import" href="wikipedia-extract-element.html">
+  <link rel="import" href="google-images-element.html">
 </head>
 <body>
 <my-counter counter="10">Points</my-counter>
@@ -17,11 +18,13 @@
 <br>
 <google-map style="width:200px;height:400px"></google-map>
 <google-map style="width:400px;height:400px" address="Chemnitz" zoom="12"></google-map>
+<google-images style="width:300px;height:300px"></google-images>
 <br>
-<smart-video width="550" height="300">
+<smart-video style="width:350px;height:200px">
   <source src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/TV-20140307-0222-2601.webm.h264.mp4" type="video/mp4" />
   <track src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/tagesschau-20140307.vtt" label="Metadata" kind="metadata" default />
 </smart-video>
+<br>
 <translate-text from="de" to="en"></translate-text>
 <semantic-extraction></semantic-extraction>
 <wikipedia-extract></wikipedia-extract>
