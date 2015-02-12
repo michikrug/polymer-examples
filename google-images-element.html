@@ -24,11 +24,9 @@
         var _this = this;
         window.xhrq.get('https://ajax.googleapis.com/ajax/services/search/images?v=1.0', function(data) {
           var content = [];
-          if (data.responseData) {
-            data.responseData.results.forEach(function(result) {
-              content.push('<img style="width:100%;" src="' + result.url + '" onerror="this.parentNode.removeChild(this);">');
-            });
-          }
+          data.responseData && data.responseData.results.forEach(function(result) {
+            content.push('<img style="width:100%;" src="' + result.url + '" onerror="this.parentNode.removeChild(this);">');
+          });
           _this.$.container.innerHTML = content.join('');
         }, { q: this.query }, 'json');
       },
