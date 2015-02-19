@@ -32,22 +32,25 @@
           grant_type: "client_credentials"
         }, 'json', skipCache);
       },
-      textReceived: function(message) {
-        if (typeof message.data !== 'string' || !this._accessToken) return;
+      translateText: function(text, callback) {
         var _this = this;
         window.xhrq.get('http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=', function(data) {
           if (~data.indexOf('ArgumentException')) {
             _this._accessToken = null;
-            _this.getToken(true, function() { _this.textReceived(message); });
+            _this.getToken(true, function() { _this.translateText(text, callback); });
             return;
           }
-          _this._pubsub_sendMessage('text_' + _this.to, data);
+          callback.call(_this, data);
         }, {
-          appId : 'Bearer ' + this._accessToken,
-          from : this.from,
-          to : this.to,
-          text : message.data
+          appId: 'Bearer ' + this._accessToken,
+          from: this.from,
+          to: this.to,
+          text: text
         }, 'json');
+      },
+      textReceived: function(message) {
+        if (typeof message.data !== 'string' || !this._accessToken) return;
+        this.translateText(message.data, function(data) { this._pubsub_sendMessage('text_' + this.to, data) });
       }
     });
   </script>
