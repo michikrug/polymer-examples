@@ -23,9 +23,7 @@
       queryChanged: function() {
         var _this = this;
         window.xhrq.get('http://en.wikipedia.org/w/api.php?action=query&redirects', function(data) {
-          var extract = data.query.pages[Object.keys(data.query.pages)[0]].extract;
-          if (!extract) return;
-          _this.$.container.innerHTML = extract;
+          _this.$.container.innerHTML = data.query.pages[Object.keys(data.query.pages)[0]].extract || '';
         }, {
           titles: this.query,
           prop: 'extracts',
