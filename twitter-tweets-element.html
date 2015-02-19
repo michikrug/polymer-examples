@@ -1,0 +1,52 @@
+<polymer-element name="twitter-tweets" attributes="query language" language="en">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      :host #container {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        position: relative;
+      }
+    </style>
+    <div id="container">
+      <template repeat="{{tweet in tweets}}">
+        <p><strong>{{tweet.user.screen_name}}:</strong> {{tweet.text}}</p>
+      </template>
+    </div>
+  </template>
+  <script defer src="../SmartComposition/xhrq.js"></script>
+  <script>
+    Polymer({
+      isSmartComponent: true,
+      publish: {
+        language: { value: 'en', reflect: true },
+        query: { reflect: true }
+      },
+      queryChanged: function() {
+        this.getTweets();
+      },
+      languageChanged: function() {
+        this.getTweets();
+      },
+      getTweets: function() {
+        var _this = this;
+        window.xhrq.get('https://api.twitter.com/1.1/search/tweets.json', function(tweets) {
+          _this.tweets = tweets && tweets.statuses || [];
+        }, {
+          q: this.query,
+          lang: this.language,
+          count: 4
+        }, 'json');
+      },
+      created: function() {
+        this._pubsub_subscribe('tweets', this.queryReceived);
+      },
+      queryReceived: function(message) {
+        if (typeof message.data === 'string') this.query = message.data;
+      }
+    });
+  </script>
+</polymer-element>
