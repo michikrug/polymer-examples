@@ -1,4 +1,4 @@
-<polymer-element name="twitter-tweets" attributes="query language" language="en">
+<polymer-element name="twitter-tweets" attributes="query language">
   <template>
     <style>
       :host {
@@ -10,10 +10,17 @@
         overflow: auto;
         position: relative;
       }
+      :host #container .highlight {
+        color: orange;
+      }
     </style>
     <div id="container">
+      <content></content>
       <template repeat="{{tweet in tweets}}">
-        <p><strong>{{tweet.user.screen_name}}:</strong> {{tweet.text}}</p>
+        <p>
+          <strong>{{tweet.user.screen_name}}:</strong>
+          <template repeat="{{part in tweet.parts}}"><span class="{{ part.highlight ? 'highlight' : '' }}">{{part.text}}</span></template>
+        </p>
       </template>
     </div>
   </template>
@@ -22,8 +29,12 @@
     Polymer({
       isSmartComponent: true,
       publish: {
+        count: { value: '4', reflect: true },
         language: { value: 'en', reflect: true },
         query: { reflect: true }
+      },
+      countChanged: function() {
+        this.getTweets();
       },
       queryChanged: function() {
         this.getTweets();
@@ -33,12 +44,18 @@
       },
       getTweets: function() {
         var _this = this;
+        var re = new RegExp('(' + this.query + ')', "ig");
         window.xhrq.get('https://api.twitter.com/1.1/search/tweets.json', function(tweets) {
           _this.tweets = tweets && tweets.statuses || [];
+          _this.tweets.forEach(function(tweet) {
+            tweet.parts = tweet.text.split(re).map(function(part) {
+              return { text: part, highlight: part.toLowerCase() === _this.query.toLowerCase()};
+            });
+          });
         }, {
           q: this.query,
-          lang: this.language,
-          count: 4
+          lang: this.language || 'en',
+          count: this.count || 4
         }, 'json');
       },
       created: function() {
