@@ -18,6 +18,16 @@
       window.dispatchEvent(new Event('gmapsLoaded'));
     };
 
+    window.loadScript = function(src, callback) {
+      if (document.querySelector('script[src="' + src + '"]')) return;
+      var script = document.createElement('script');
+      script.async = 1;
+      script.defer = 1;
+      script.src = src;
+      if (callback) script.onload = callback;
+      document.body.appendChild(script);
+    };
+
     Polymer({
       isSmartComponent: true,
       publish: {
