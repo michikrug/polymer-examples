@@ -1,0 +1,39 @@
+<polymer-element name="campus-plan" attributes="room">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      :host img {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <img src="{{roomImageUrl}}">
+  </template>
+  <script defer src="../SmartComposition/xhrq.js"></script>
+  <script>
+    Polymer({
+      isSmartComponent: true,
+      publish: {
+        room: { reflect: true }
+      },
+      roomChanged: function() {
+        this.getRoomImage();
+      },
+      getRoomImage: function() {
+        var _this = this;
+        window.xhrq.get('http://www.tu-chemnitz.de/tu/lageplan/campusfinder/campusfinder2014.php?raum=' + this.room, function(data) {
+          var p = data.substr(data.lastIndexOf('kartezeichnen.php?'));
+          _this.roomImageUrl = 'http://www.tu-chemnitz.de/tu/lageplan/campusfinder/' + p.substr(0, p.indexOf('"'));
+        });
+      },
+      created: function() {
+        this._pubsub_subscribe('room', this.roomReceived);
+      },
+      roomReceived: function(message) {
+        if (typeof message.data === 'string') this.room = message.data;
+      }
+    });
+  </script>
+</polymer-element>
