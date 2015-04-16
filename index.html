@@ -12,15 +12,13 @@
   <link rel="import" href="wikipedia-extract-element.html">
   <link rel="import" href="google-images-element.html">
   <link rel="import" href="twitter-tweets-element.html">
-  <!-- <link rel="import" href="campus-plan-element.html"> -->
+  <link rel="import" href="campus-plan-element.html">
   <style>
+    html { box-sizing: border-box; }
+    *, *:before, *:after { box-sizing: inherit; }
     body { font-size: 16px; font-family: sans-serif; margin: 1em; }
-    body > div { box-sizing: border-box; padding:1em; margin:1em; border:1px solid silver; }
-    div.description {
-      font-family: monospace;
-      border: 1px silver dashed;
-      padding: 1em;
-    }
+    body > div { padding:1em; margin:1em; border:1px solid silver; }
+    div.description { font-family: monospace; border: 1px silver dashed; padding: 1em; }
   </style>
 </head>
 <body>
@@ -49,8 +47,14 @@
   </div>
   <div style="text-align:center;display:inline-block;width:calc(60% - 2em - 3px);">
     <google-map style="width:59%;height:400px" address="Chemnitz" zoom="12"></google-map>
-    <google-images style="width:40%;height:400px" query="Chemnitz"></google-images>
-    <br>
+    <google-images style="width:40%;height:400px">
+      <script type="text/x-data">
+      { "results": [
+        { "url": "http://www.duden.de/_media_/full/B/Banane-201020047719.jpg" },
+        { "url": "http://www.cuisine-de-bebe.com/wp-content/uploads/banane1.jpg" }
+      ] }
+      </script>
+    </google-images>
   </div>
   <div style="text-align:center;display:inline-block;width:calc(50% - 2em - 3px);">
     <wikipedia-extract style="text-align:justify;height:180px" query="Chemnitz"></wikipedia-extract>
@@ -63,7 +67,7 @@
     <my-counter counter="10" style="width:30%">Points</my-counter>
     <my-counter counter="12" style="width:30%">Punkte</my-counter>
   </div>
-  <!-- <campus-plan style="width:200px;height:200px" room="1/B204"></campus-plan> -->
+  <campus-plan style="width:200px;height:200px" room="1/B204"></campus-plan>
   <script async defer src="../SmartComposition/SynchronizationService.js"></script>
 </body>
 </html>
