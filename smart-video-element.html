@@ -68,7 +68,11 @@
         isSmartComponent: true,
         addInteraction: true,
         publish: {
+          currentTime: { value: 0, reflect: false },
           youtubeUrl: { reflect: true }
+        },
+        currentTimeChanged: function() {
+          this.currentTime > 0 && (this.$.video.currentTime = parseInt(this.currentTime));
         },
         created: function() {
           this._pubsub_listening = false;
@@ -148,12 +152,13 @@
             _this._ready = true;
 
             this.addEventListener('timeupdate', function() {
+              _this.currentTime = this.currentTime;
               _this._pubsub_sendMessage('time', this.currentTime);
               if (_this._isFirefox && textTrack) _this.cueChanged.bind(textTrack)();
             });
 
-            if (_this.LastMessage && _this.LastMessage.data.type === 'time') {
-              this.currentTime = parseInt(_this.LastMessage.data.data);
+            if (_this.currentTime > 0) {
+              this.currentTime = parseInt(_this.currentTime);
             }
 
             var textTrack = null, textTracks = this.textTracks;
