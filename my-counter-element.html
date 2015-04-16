@@ -1,6 +1,6 @@
 <polymer-element name="my-counter" attributes="counter">
   <template>
-    <style> /*...*/ </style>
+    <style>:host { position: relative; display: inline-block; }</style>
     <div id="label"><content></content></div>
     Value: <span id="counterVal">{{counter}}</span><br>
     <button on-tap="{{increment}}">Increment</button>
@@ -13,7 +13,7 @@
         counter: { reflect: true }
       },
       created: function() {
-        this._pubsub_subscribe('counter');
+        this._pubsub_subscribe('counter', this.setCounter);
       },
       counterChanged: function() {
         this.$.counterVal.classList.add('highlight');
@@ -21,6 +21,9 @@
       increment: function() {
         this.counter++;
         this._pubsub_sendMessage('counter', this.counter);
+      },
+      setCounter: function(message) {
+        this.counter = message.data;
       }
     });
   </script>
