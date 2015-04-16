@@ -1,4 +1,4 @@
-<polymer-element name="google-map" attributes="width height lat lng zoom address" zoom="6" lat="51" lng="11">
+<polymer-element name="google-map" attributes="lat lng zoom address" zoom="6" lat="51" lng="11">
   <template>
     <style>
       :host {
@@ -19,17 +19,22 @@
     };
 
     window.loadScript = function(src, callback) {
-      if (document.querySelector('script[src="' + src + '"]')) return;
-      var script = document.createElement('script');
-      script.async = 1;
-      script.defer = 1;
-      script.src = src;
-      if (callback) script.onload = callback;
-      document.body.appendChild(script);
+      var s = document.querySelector('script[src="' + src + '"]');
+      if (s) {
+        callback && (s.loaded && callback.call()) || s.addEventListener('load', callback);
+        return;
+      }
+      s = document.createElement('script');
+      s.async = 1;
+      s.defer = 1;
+      s.src = src;
+      s.addEventListener('load', function() { this.loaded = true; callback && callback.call(); });
+      document.body.appendChild(s);
     };
 
     Polymer({
       isSmartComponent: true,
+      addInteraction: true,
       publish: {
         lat:     { value: 51, reflect: true },
         lng:     { value: 11, reflect: true },
@@ -82,7 +87,7 @@
 
         if (this.address) this.queryAddress(this.address);
 
-        google.maps.event.addListener(this._map, 'dragend', function() {
+        google.maps.event.addListener(this._map, 'drag', function() {
           var center = this.getCenter();
           _this.lat = center.lat();
           _this.lng = center.lng();
