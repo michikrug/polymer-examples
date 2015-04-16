@@ -21,8 +21,10 @@
   <script>
     Polymer({
       isSmartComponent: true,
+      addInteraction: true,
       publish: {
-        query: { reflect: true }
+        query: { reflect: true },
+        results: { presetable: true }
       },
       queryChanged: function() {
         var _this = this;
