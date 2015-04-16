@@ -23,9 +23,9 @@
       },
       getRoomImage: function() {
         var _this = this;
-        window.xhrq.get('http://www.tu-chemnitz.de/tu/lageplan/campusfinder/campusfinder2014.php?raum=' + this.room, function(data) {
+        window.xhrq.get('https://www.tu-chemnitz.de/tu/lageplan/campusfinder/campusfinder2014.php?raum=' + this.room, function(data) {
           var p = data.substr(data.lastIndexOf('kartezeichnen.php?'));
-          _this.roomImageUrl = 'http://www.tu-chemnitz.de/tu/lageplan/campusfinder/' + p.substr(0, p.indexOf('"'));
+          _this.roomImageUrl = 'https://www.tu-chemnitz.de/tu/lageplan/campusfinder/' + p.substr(0, p.indexOf('"'));
         });
       },
       created: function() {
