@@ -34,13 +34,13 @@
         query: { reflect: true }
       },
       countChanged: function() {
-        this.getTweets();
+        this.query && this.getTweets();
       },
       queryChanged: function() {
         this.getTweets();
       },
       languageChanged: function() {
-        this.getTweets();
+        this.query && this.getTweets();
       },
       getTweets: function() {
         var _this = this;
