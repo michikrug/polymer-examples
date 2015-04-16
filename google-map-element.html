@@ -43,9 +43,11 @@
       },
       latChanged: function() {
         this._map && this._map.setCenter({ lat: this.lat, lng: this.lng });
+        this.address = null;
       },
       lngChanged: function() {
         this._map && this._map.setCenter({ lat: this.lat, lng: this.lng });
+        this.address = null;
       },
       zoomChanged: function() {
         this._map && this._map.setZoom(this.zoom);
