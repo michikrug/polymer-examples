@@ -136,12 +136,12 @@
               cueData.entries.forEach(function(entry) {
                 var type = entry.type;
                 var props = entry.properties;
-                if (type === 'image' || type === 'wiki' || type === 'tweets' || type === 'coordinates') _this._pubsub_sendMessage(type, props.data);
+                if (type === 'image' || type === 'wiki' || type === 'tweets' || type === 'coordinates') _this._pubsub_publish(type, props.data);
                 if (type === 'subtitle') {
-                  if (props.text_de) _this._pubsub_sendMessage('text_de', props.text_de);
-                  if (props.text_en) _this._pubsub_sendMessage('text_en', props.text_en);
-                  if (props.text_fr) _this._pubsub_sendMessage('text_fr', props.text_fr);
-                  if (props['text_en-US']) _this._pubsub_sendMessage('text_en', props['text_en-US']);
+                  if (props.text_de) _this._pubsub_publish('text_de', props.text_de);
+                  if (props.text_en) _this._pubsub_publish('text_en', props.text_en);
+                  if (props.text_fr) _this._pubsub_publish('text_fr', props.text_fr);
+                  if (props['text_en-US']) _this._pubsub_publish('text_en', props['text_en-US']);
                 }
               });
               if (_this._isFirefox) _this.activeCues.push(cue);
@@ -153,7 +153,7 @@
 
             this.addEventListener('timeupdate', function() {
               _this.currentTime = this.currentTime;
-              _this._pubsub_sendMessage('time', this.currentTime);
+              _this._pubsub_publish('time', this.currentTime);
               if (_this._isFirefox && textTrack) _this.cueChanged.bind(textTrack)();
             });
 

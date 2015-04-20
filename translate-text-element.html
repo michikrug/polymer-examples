@@ -50,7 +50,7 @@
       },
       textReceived: function(message) {
         if (typeof message.data !== 'string' || !this._accessToken) return;
-        this.translateText(message.data, function(data) { this._pubsub_sendMessage('text_' + this.to, data) });
+        this.translateText(message.data, function(data) { this._pubsub_publish('text_' + this.to, data) });
       }
     });
   </script>

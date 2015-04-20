@@ -93,7 +93,7 @@
           var center = this.getCenter();
           _this.lat = center.lat();
           _this.lng = center.lng();
-          _this._pubsub_sendMessage('coordinates', { lat: _this.lat, lng: _this.lng });
+          _this._pubsub_publish('coordinates', { lat: _this.lat, lng: _this.lng });
         });
 
         google.maps.event.addListener(this._map, 'zoom_changed', function() {

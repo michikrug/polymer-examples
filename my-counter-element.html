@@ -20,7 +20,7 @@
       },
       increment: function() {
         this.counter++;
-        this._pubsub_sendMessage('counter', this.counter);
+        this._pubsub_publish('counter', this.counter);
       },
       setCounter: function(message) {
         this.counter = message.data;

@@ -21,16 +21,16 @@
               case 'Continent':
               case 'StateOrCounty':
               case 'GeographicFeature':
-                _this._pubsub_sendMessage('address', entity.text, token);
-                _this._pubsub_sendMessage('image', entity.text, token);
-                _this._pubsub_sendMessage('wiki', entity.text, token);
+                _this._pubsub_publish('address', entity.text, token);
+                _this._pubsub_publish('image', entity.text, token);
+                _this._pubsub_publish('wiki', entity.text, token);
                 break;
               case 'Person':
               case 'Company':
               case 'Organization':
-                _this._pubsub_sendMessage('tweets', entity.text, token);
-                _this._pubsub_sendMessage('image', entity.text, token);
-                _this._pubsub_sendMessage('wiki', entity.text, token);
+                _this._pubsub_publish('tweets', entity.text, token);
+                _this._pubsub_publish('image', entity.text, token);
+                _this._pubsub_publish('wiki', entity.text, token);
                 break;
               default:
                 break;
