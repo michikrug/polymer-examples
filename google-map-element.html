@@ -119,10 +119,8 @@
         });
       },
       coordinatesReceived: function(message) {
-        if (message.data.lat && message.data.lng) {
-          this.lat = message.data.lat;
-          this.lng = message.data.lng;
-        }
+        if (message.data.lat) this.lat = message.data.lat;
+        if (message.data.lng) this.lng = message.data.lng;
       },
       addressReceived: function(message) {
         if (typeof message.data === 'string') {
