@@ -73,7 +73,7 @@
           youtubeUrl: { reflect: true }
         },
         currentTimeChanged: function() {
-          this.currentTime > 0 && (this.$.video.currentTime = parseInt(this.currentTime));
+          this.$.video.paused && this.currentTime > 0 && (this.$.video.currentTime = parseInt(this.currentTime));
         },
         created: function() {
           this._pubsub_listening = false;
