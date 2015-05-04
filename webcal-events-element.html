@@ -1,0 +1,197 @@
+<polymer-element name="webcal-events" attributes="date">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      :host #container {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        position: relative;
+        text-align: left;
+      }
+      h4 {
+        margin: .5em 0;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      ul li {
+        padding: .5em 0;
+        border-bottom: 1px solid silver;
+      }
+      ul li:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+    </style>
+    <div id="container">
+      <h4>Events on {{dateString}}</h4>
+      <ul>
+        <template repeat="{{event in events}}">
+          <li>{{event.dtstart[0].localTimeFormatted}} - {{event.dtend[0].localTimeFormatted}}: {{event.summary[0].value}}</li>
+        </template>
+      </ul>
+    </div>
+  </template>
+  <script defer src="../SmartComposition/xhrq.js"></script>
+  <script>
+    (function() {
+      var Ical = function Ical() {
+        this.version = '';
+        this.prodid = '';
+        this.events = [];
+        this.todos = [];
+        this.journals = [];
+        this.freebusys = [];
+      }
+      var xprops = 'x-[^:;]+';
+      var ianaprops = '[\\w]+[^:;]+';
+      var icalParser = {
+        icals: [],
+        propsList: {
+          'event': '(dtstamp|uid|dtstart|class|created|description|geo|last-mod|location|organizer|priority|seq|status|summary|transp|url|recurid|rrule|dtend|duration|attach|attendee|categories|comment|contact|exdate|rstatus|related|resources|rdate|' + xprops + '|' + ianaprops + ')',
+          'freebusy': '(dtstamp|uid|contact|dtstart|dtend|organizer|url|attendee|comment|freebusy|rstatus|' + xprops + '|' + ianaprops + ')',
+          'journal': '(dtstamp|uid|class|created|dtstart|last-mod|organizer|recurid|seq|status|summary|url|rrule|attach|attendee|categories|comment|contact|description|exdate|related|rdate|rstatus|' + xprops + '|' + ianaprops + ')',
+          'todo': '(dtstamp|uid|class|completed|created|description|dtstart|geo|last-mod|location|organizer|percent|priority|recurid|seq|status|summary|url|rrule|due|duration|attach|attendee|categories|comment|contact|exdate|rstatus|related|resources|rdate|' + xprops + '|' + ianaprops + ')'
+        },
+        parseIcalDate: function(date) {
+          if (!date) throw 'No date specified';
+          var year   = date.substr(0, 4);
+          var month  = parseInt(date.substr(4, 2), 10) -1;
+          var day    = date.substr(6, 2);
+          var hour   = date.substr(9, 2);
+          var minute = date.substr(11, 2);
+          var second = date.substr(13, 2);
+          var parsedDate = new Date(Date.UTC(year, month, day, hour, minute, second));
+          return parsedDate;
+        },
+        parseIcal: function(icsString) {
+          var cals = icsString.match(/BEGIN:VCALENDAR\r?\n(.*\r?\n)+?END:VCALENDAR/ig);
+          for (var index in cals) {
+            var ical = new Ical();
+            ical.version = this.getValue('VERSION', cals[index]);
+            ical.prodid = this.getValue('PRODID', cals[index]);
+            cals[index] = cals[index].replace(/\r\n /g, '');
+            cals[index] = cals[index].replace(/BEGIN:VCALENDAR\r?\n/ig, '');
+            var reg = /BEGIN:(V.*?)\r?\n(.*\r?\n)+?END:\1/gi;
+            matches = cals[index].match(reg);
+            if (matches) {
+              for (i = 0; i < matches.length; i++) {
+                this.parseVComponent(matches[i], ical);
+              }
+            }
+            this.icals[this.icals.length] = ical;
+          }
+        },
+        parseVComponent: function(vComponent, ical) {
+          var nameComponent = vComponent.match(/BEGIN:V([^\s]+)/i)[1].toLowerCase();
+          vComponent = vComponent.replace(/\r?\n[\s]+/igm, ''); //unfolding
+          vComponent = vComponent.replace(/(^begin|^end):.*/igm, '');
+          var props = vComponent.match(new RegExp(this.propsList[nameComponent] + '[:;].*', 'gim'));
+          if (props) {
+            var component = [];
+            for (var index in props) {
+              var nom = props[index].replace(/[:;].*$/, '');
+              var propKey = /*'prop_'+*/ nom.toLowerCase();
+              if (component[propKey] === undefined) component[propKey] = [];
+              component[propKey][component[propKey].length] = this.getValue(nom, props[index]);
+              component['raw'] = vComponent;
+            }
+            if (ical[nameComponent + 's'] !== undefined)
+              ical[nameComponent + 's'][ical[nameComponent + 's'].length] = component;
+          }
+        },
+        getValue: function(propName, line) {
+          var prop = {};
+          line = line.replace(/^\s+/g, '').replace(/\s+$/gi, '');
+          reg = new RegExp('(' + propName + ')((?:;[^=]*=[^;:\n]*)*):([^\n\r]*)', 'gi');
+          var matches = reg.exec(line);
+          if (matches) {
+            var valeur = RegExp.$3;
+            var tab_params = [];
+            if (RegExp.$2.length > 0) {
+              var params = RegExp.$2.substr(1).split(';');
+              var pair;
+              for (k = 0; k < params.length; k++) {
+                pair = params[k].split('=');
+                if (!pair[1]) pair[1] = pair[0];
+                tab_params[pair[0]] = pair[1];
+              }
+            }
+            prop.value = valeur;
+            prop.name = propName;
+            if (['dtsamp', 'dtstart', 'dtend', 'last-modified'].indexOf(propName.toLowerCase()) > -1) {
+              prop.date = this.parseIcalDate(valeur);
+              prop.localDate = prop.date.toLocaleDateString('en-US');
+              prop.localTime = prop.date.toLocaleTimeString('en-US');
+              prop.localTimeFormatted = prop.date.toLocaleTimeString('de-DE').substr(0,5);
+            }
+            if (Object.keys(tab_params).length > 0)
+              prop.params = tab_params;
+          }
+          return prop;
+        },
+      };
+
+      Polymer({
+        isSmartComponent: true,
+        isInteractive: true,
+        isDraggable: true,
+        publish: {
+          events: { value: [] },
+          dataSource: { value: '' },
+          date: { value: new Date(), reflect: true }
+        },
+        dateChanged: function() {
+          try {
+            var dayStart = new Date(new Date(this.date).toDateString());
+            var dayEnd = new Date(dayStart);
+            dayEnd.setDate(dayEnd.getDate() + 1);
+            this.dateString = dayStart.toDateString();
+            var events = [];
+            this.ical.events.forEach(function(event) {
+              var start = event.dtstart[0].date;
+              var end = event.dtend[0].date;
+              if ((start >= dayStart && start <= dayEnd) || (end >= dayStart && end <= dayEnd)) events.push(event);
+            });
+            this.events = events;
+          } catch(e) {
+            throw('Invalid Date');
+          }
+        },
+        dataSourceChanged: function() {
+          var _this = this;
+          window.xhrq.get(this.dataSource, function(data) {
+            icalParser.parseIcal(data);
+            _this.ical = icalParser.icals[0];
+            _this.ical.events.sort(function(a,b) { return a.dtstart[0].date > b.dtstart[0].date; })
+          });
+        },
+        created: function() {
+          var _this = this;
+          this._src_observer = new MutationObserver(function(mutations) {
+            _this.dataSource = mutations[0].target.getAttribute('src');
+          });
+          this.dateString = this.date.toDateString();
+          this._pubsub_subscribe('date', this.dateReceived);
+        },
+        attached: function() {
+          var ds = this.querySelector('data-source');
+          if (!ds) return;
+          this.dataSource = ds.getAttribute('src');
+          this._src_observer && this._src_observer.observe(ds, { attributes : true, attributeFilter : ['src'] });
+        },
+        detached: function() {
+          this._src_observer && this._src_observer.disconnect();
+        },
+        dateReceived: function(message) {
+          this.date = message.data;
+        }
+      });
+    })();
+  </script>
+</polymer-element>

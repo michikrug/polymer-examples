@@ -1,0 +1,43 @@
+<polymer-element name="date-picker" attributes="date">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      :host #container {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        position: relative;
+        text-align: left;
+      }
+    </style>
+    <div id="container">
+      <input type="date" value="{{date}}" on-change="{{dateChanged}}" name="date">
+    </div>
+  </template>
+  <script>
+    Polymer({
+      isSmartComponent: true,
+      publish: {
+        date: { reflect: true }
+      },
+      dateChanged: function() {
+       this._pubsub_publish('date', this.date);
+      },
+      created: function() {
+        if (!this.date) {
+          function addZero(i) {
+            return (i < 10) ? '0' + i : i;
+          }
+          var d = new Date();
+          this.date = d.getFullYear() + '-' + addZero(d.getMonth()+1) + '-' + addZero(d.getDate());
+        }
+        this._pubsub_subscribe('date', this.dateReceived);
+      },
+      dateReceived: function(message) {
+        this.date = message.data;
+      }
+    });
+  </script>
+</polymer-element>
