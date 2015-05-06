@@ -20,8 +20,11 @@
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
     body { font-size: 16px; font-family: sans-serif; margin: 1em; }
-    body > div { padding:1em; margin:1em; border:1px solid silver; }
-    div.description { font-family: monospace; border: 1px silver dashed; padding: 1em; }
+    body > div { padding: 1em; margin: 1em; border: 1px solid silver; text-align: center; display: inline-block; width: calc(100% - 2em - 3px); }
+    div.description { font-family: monospace; border: 1px silver dashed; width: calc(100% - 2em - 3px);}
+    @media (max-width: 900px) {
+      body > div { display:block; width:calc(100% - 2em - 3px) !important; }
+    }
   </style>
 </head>
 <body>
@@ -39,7 +42,7 @@
     <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/semantic-extraction-element.html">SEMANTIC-EXTRACTION</a>,
     <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/translate-text-element.html">TRANSLATE-TEXT</a>
   </div>
-  <div style="text-align:center;text-align:center;display:inline-block;width:calc(40% - 2em - 3px);">
+  <div style="width:calc(40% - 2em - 3px);">
     <smart-video style="width:100%;height:400px">
       <source src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/TV-20140307-0222-2601.webm.h264.mp4" type="video/mp4" />
       <track src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/tagesschau-20140307.vtt" label="Metadata" kind="metadata" default />
@@ -48,7 +51,7 @@
       <translate-text from="de" to="en"></translate-text>
     </semantic-extraction>
   </div>
-  <div style="text-align:center;display:inline-block;width:calc(60% - 2em - 3px);">
+  <div style="width:calc(60% - 2em - 3px);">
     <google-map style="width:59%;height:400px" address="Chemnitz" zoom="12"></google-map>
     <google-images style="width:40%;height:400px">
       <script type="text/x-data">
@@ -59,21 +62,20 @@
       </script>
     </google-images>
   </div>
-  <div style="text-align:center;display:inline-block;width:calc(50% - 2em - 3px);">
+  <div style="width:calc(50% - 2em - 3px);">
     <wikipedia-extract style="text-align:justify;height:180px" query="Chemnitz"></wikipedia-extract>
   </div>
-  <div style="text-align:center;display:inline-block;width:calc(50% - 2em - 2px)">
+  <div style="width:calc(50% - 2em - 2px)">
     <twitter-tweets style="text-align:justify;height:180px" query="Chemnitz" count="3"></twitter-tweets>
   </div>
   <br>
-  <div style="text-align:center;">
+  <div style="width:calc(50% - 2em - 2px)">
     <my-counter counter="10" style="width:30%">Points</my-counter>
     <my-counter counter="12" style="width:30%">Punkte</my-counter>
   </div>
-  <div style="text-align:center;display:inline-block;width:calc(50% - 2em - 3px);">
+  <div style="width:calc(50% - 2em - 3px);">
     <date-picker></date-picker>
-  </div>
-  <div style="text-align:center;display:inline-block;width:calc(50% - 2em - 3px);">
+    <br>
     <webcal-events>
       <data-source src="https://www.tu-chemnitz.de/tu/termine/ical.ics" type="text/calendar"></data-source>
     </webcal-events>
