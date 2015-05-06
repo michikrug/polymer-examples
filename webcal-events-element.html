@@ -29,7 +29,7 @@
       }
     </style>
     <div id="container">
-      <h4>Events on {{dateString}}</h4>
+      <h4>Events on {{date}}</h4>
       <ul>
         <template repeat="{{event in events}}">
           <li>{{event.dtstart[0].localTimeFormatted}} - {{event.dtend[0].localTimeFormatted}}: {{event.summary[0].value}}</li>
@@ -78,9 +78,9 @@
             cals[index] = cals[index].replace(/\r\n /g, '');
             cals[index] = cals[index].replace(/BEGIN:VCALENDAR\r?\n/ig, '');
             var reg = /BEGIN:(V.*?)\r?\n(.*\r?\n)+?END:\1/gi;
-            matches = cals[index].match(reg);
+            var matches = cals[index].match(reg);
             if (matches) {
-              for (i = 0; i < matches.length; i++) {
+              for (var i = 0; i < matches.length; i++) {
                 this.parseVComponent(matches[i], ical);
               }
             }
@@ -108,7 +108,7 @@
         getValue: function(propName, line) {
           var prop = {};
           line = line.replace(/^\s+/g, '').replace(/\s+$/gi, '');
-          reg = new RegExp('(' + propName + ')((?:;[^=]*=[^;:\n]*)*):([^\n\r]*)', 'gi');
+          var reg = new RegExp('(' + propName + ')((?:;[^=]*=[^;:\n]*)*):([^\n\r]*)', 'gi');
           var matches = reg.exec(line);
           if (matches) {
             var valeur = RegExp.$3;
@@ -116,7 +116,7 @@
             if (RegExp.$2.length > 0) {
               var params = RegExp.$2.substr(1).split(';');
               var pair;
-              for (k = 0; k < params.length; k++) {
+              for (var k = 0; k < params.length; k++) {
                 pair = params[k].split('=');
                 if (!pair[1]) pair[1] = pair[0];
                 tab_params[pair[0]] = pair[1];
@@ -130,6 +130,7 @@
               prop.localTime = prop.date.toLocaleTimeString('en-US');
               prop.localTimeFormatted = prop.date.toLocaleTimeString('de-DE').substr(0,5);
             }
+            if (propName == 'SUMMARY') prop.value = prop.value.replace(/\\,/g, ',');
             if (Object.keys(tab_params).length > 0)
               prop.params = tab_params;
           }
@@ -144,31 +145,27 @@
         publish: {
           events: { value: [] },
           dataSource: { value: '' },
-          date: { value: new Date(), reflect: true }
+          date: { value: (new Date()).toDateString(), reflect: true }
         },
         dateChanged: function() {
-          try {
-            var dayStart = new Date(new Date(this.date).toDateString());
-            var dayEnd = new Date(dayStart);
-            dayEnd.setDate(dayEnd.getDate() + 1);
-            this.dateString = dayStart.toDateString();
-            var events = [];
-            this.ical.events.forEach(function(event) {
-              var start = event.dtstart[0].date;
-              var end = event.dtend[0].date;
-              if ((start >= dayStart && start <= dayEnd) || (end >= dayStart && end <= dayEnd)) events.push(event);
-            });
-            this.events = events;
-          } catch(e) {
-            throw('Invalid Date');
-          }
+          var dayStart = new Date((new Date(this.date)).toDateString());
+          var dayEnd = new Date(dayStart);
+          dayEnd.setDate(dayEnd.getDate() + 1);
+          var events = [];
+          this.ical && this.ical.events.forEach(function(event) {
+            var start = event.dtstart[0].date;
+            var end = event.dtend[0].date;
+            if ((start >= dayStart && start <= dayEnd) || (end >= dayStart && end <= dayEnd)) events.push(event);
+          });
+          this.events = events;
         },
         dataSourceChanged: function() {
           var _this = this;
           window.xhrq.get(this.dataSource, function(data) {
             icalParser.parseIcal(data);
             _this.ical = icalParser.icals[0];
-            _this.ical.events.sort(function(a,b) { return a.dtstart[0].date > b.dtstart[0].date; })
+            _this.ical.events.sort(function(a,b) { return a.dtstart[0].date > b.dtstart[0].date; });
+            _this.dateChanged();
           });
         },
         created: function() {
@@ -176,7 +173,6 @@
           this._src_observer = new MutationObserver(function(mutations) {
             _this.dataSource = mutations[0].target.getAttribute('src');
           });
-          this.dateString = this.date.toDateString();
           this._pubsub_subscribe('date', this.dateReceived);
         },
         attached: function() {
@@ -189,7 +185,7 @@
           this._src_observer && this._src_observer.disconnect();
         },
         dateReceived: function(message) {
-          this.date = message.data;
+          this.date = (new Date(message.data)).toDateString();
         }
       });
     })();
