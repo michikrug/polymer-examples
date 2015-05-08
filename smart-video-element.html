@@ -94,7 +94,7 @@
             _this.shadowRoot.replaceChild(v, _this.$.video);
             _this.$.video = v;
             var mp4 = video.getSource("video/mp4", "high");
-            _this.innerHTML = mp4 ? '<source src="' + mp4.url + '" type="video/mp4">\n<track src="http://apfel.informatik.tu-chemnitz.de/chrooma/YouTubeCaptionGrabber/YouTubeCaptionService/GetCaption.ashx?v=' + videoId + '" kind="metadata" default>' : '';
+            _this.innerHTML = mp4 ? '<source src="' + mp4.url + '" type="video/mp4">\n<track src="http://vsr-demo.informatik.tu-chemnitz.de/chroomaplus/YouTubeCaptionService/GetCaption.ashx?v=' + videoId + '" kind="metadata" default>' : '';
             _this.initVideo();
           });
         },
