@@ -47,7 +47,7 @@
       },
       getTweets: function() {
         var _this = this;
-        var re = new RegExp('(' + this.query + ')', "ig");
+        var re = new RegExp('(' + this.query + ')', 'ig');
         window.xhrq.get('https://api.twitter.com/1.1/search/tweets.json', function(tweets) {
           _this.tweets = tweets && tweets.statuses || [];
           _this.tweets.forEach(function(tweet) {
