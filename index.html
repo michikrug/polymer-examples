@@ -4,18 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="../webcomponentsjs/dist/webcomponents.min.js"></script>
-  <link rel="import" href="../polymer/dist/polymer.html">
-  <link rel="import" href="my-counter-element.html">
-  <link rel="import" href="google-map-element.html">
-  <link rel="import" href="smart-video-element.html">
-  <link rel="import" href="translate-text-element.html">
-  <link rel="import" href="semantic-extraction-element.html">
-  <link rel="import" href="wikipedia-extract-element.html">
-  <link rel="import" href="google-images-element.html">
-  <link rel="import" href="twitter-tweets-element.html">
+  <link rel="import" href="../polymer/polymer.html">
   <link rel="import" href="campus-plan-element.html">
-  <link rel="import" href="webcal-events-element.html">
-  <link rel="import" href="date-picker-element.html">
   <style>
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
@@ -30,59 +20,14 @@
 <body>
   <div class="description">
     View source of website:<br>
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/index.html">INDEX</a><br>
-    <br>
-    View source of components:<br>
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/smart-video-element.html">SMART-VIDEO</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-map-element.html">GOOGLE-MAP</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-images-element.html">GOOGLE-IMAGES</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/wikipedia-extract-element.html">WIKIPEDIA-EXTRACT</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/twitter-tweets-element.html">TWITTER-TWEETS</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/semantic-extraction-element.html">SEMANTIC-EXTRACTION</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/translate-text-element.html">TRANSLATE-TEXT</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/my-counter-element.html">MY-COUNTER</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/date-picker-element.html">DATE-PICKER</a>,
-    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/webcal-events-element.html">WEBCAL-EVENTS</a>
+    <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/index.html">INDEX</a>
   </div>
   <div style="width:calc(40% - 2em - 3px);">
-    <smart-video style="width:100%;height:400px">
-      <source src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/TV-20140307-0222-2601.webm.h264.mp4" type="video/mp4" />
-      <track src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/tagesschau-20140307.vtt" label="Metadata" kind="metadata" default />
-    </smart-video>
-    <semantic-extraction>
-      <translate-text from="de" to="en"></translate-text>
-    </semantic-extraction>
+    <campus-plan style="width:200px;height:200px" room="1/B204"></campus-plan>
   </div>
-  <div style="width:calc(60% - 2em - 3px);">
-    <google-map style="width:59%;height:400px" address="Chemnitz" zoom="12"></google-map>
-    <google-images style="width:40%;height:400px">
-      <script type="text/x-data">
-      { "results": [
-        { "url": "http://www.duden.de/_media_/full/B/Banane-201020047719.jpg" },
-        { "url": "http://www.cuisine-de-bebe.com/wp-content/uploads/banane1.jpg" }
-      ] }
-      </script>
-    </google-images>
+  <div style="width:calc(40% - 2em - 3px);">
+    <campus-plan style="width:200px;height:200px" room="1/B204"></campus-plan>
   </div>
-  <div style="width:calc(50% - 2em - 3px);">
-    <wikipedia-extract style="text-align:justify;height:180px" query="Chemnitz"></wikipedia-extract>
-  </div>
-  <div style="width:calc(50% - 2em - 2px)">
-    <twitter-tweets style="text-align:justify;height:180px" query="Chemnitz" count="3"></twitter-tweets>
-  </div>
-  <br>
-  <div style="width:calc(50% - 2em - 2px)">
-    <my-counter counter="10" style="width:30%">Points</my-counter>
-    <my-counter counter="12" style="width:30%">Punkte</my-counter>
-  </div>
-  <div style="width:calc(50% - 2em - 3px);">
-    <date-picker></date-picker>
-    <br>
-    <webcal-events>
-      <data-source src="https://www.tu-chemnitz.de/tu/termine/ical.ics" type="text/calendar"></data-source>
-    </webcal-events>
-  </div>
-  <campus-plan style="width:200px;height:200px" room="1/B204"></campus-plan>
   <script async defer src="../SmartComposition/SynchronizationService.js"></script>
 </body>
 </html>
