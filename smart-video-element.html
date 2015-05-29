@@ -1,187 +1,200 @@
-<polymer-element name="smart-video" attributes="youtubeUrl">
+<dom-module id="smart-video">
+  <style>
+    :host {
+      display: inline-block;
+    }
+    #video {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      position: relative;
+    }
+  </style>
   <template>
-    <style>
-      :host {
-        display: inline-block;
-      }
-      #video {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        position: relative;
-      }
-    </style>
     <video id="video" controls></video>
   </template>
-  <script>
-    (function() {
+</dom-module>
 
-      var YoutubeVideo = function(id, callback) {
-        return window.xhrq.get("http://www.youtube.com/get_video_info?video_id=" + id, function(video_info) {
-          function decodeQueryString(queryString) {
-            var keyValPairs = queryString.split('&'), r = {};
-            for (var _i = 0, _len = keyValPairs.length; _i < _len; _i++) {
-              r[decodeURIComponent(keyValPairs[_i].split('=')[0])] = decodeURIComponent(keyValPairs[_i].split('=')[1] || '');
-            }
-            return r;
-          }
-          var video = decodeQueryString(video_info);
-          if (video.status === 'fail') return callback(video);
-          video.sources = (function(url_encoded_fmt_stream_map) {
-            var sources = {}, _ref = url_encoded_fmt_stream_map.split(',');
-            for (var _i = 0, _len = _ref.length; _i < _len; _i++) {
-              var urlEncodedStream    = _ref[_i],
-                  stream              = decodeQueryString(urlEncodedStream),
-                  type                = stream.type.split(';')[0],
-                  quality             = stream.quality.split(',')[0];
-              stream.original_url = stream.url,
-              stream.url          = stream.url + '&signature=' + stream.sig;
-              sources[type + ' ' + quality] = stream;
-            }
-            return sources;
-          })(video.url_encoded_fmt_stream_map);
-          video.getSource = function(type, quality) {
-            var lowest = exact = null, _ref = this.sources, key, source;
-            for (key in _ref) {
-              source = _ref[key];
-              if (source.type.match(type)) {
-                if (source.quality.match(quality)) {
-                  exact = source;
-                } else {
-                  lowest = source;
-                }
-              }
-            }
-            return exact || lowest;
-          };
-          return callback(video);
-        });
-      };
+<script defer src="../SmartComposition/xhrq.js"></script>
 
-      function fragmentFromString(strHTML) {
-        var temp = document.createElement('template');
-        temp.innerHTML = strHTML;
-        return temp.content;
+<script>
+(function() {
+
+  var YoutubeVideo = function(id, callback) {
+    return window.xhrq.get("http://www.youtube.com/get_video_info?video_id=" + id, function(video_info) {
+      function decodeQueryString(queryString) {
+        var keyValPairs = queryString.split('&'), r = {};
+        for (var _i = 0, _len = keyValPairs.length; _i < _len; _i++) {
+          r[decodeURIComponent(keyValPairs[_i].split('=')[0])] = decodeURIComponent(keyValPairs[_i].split('=')[1] || '');
+        }
+        return r;
       }
-
-      Polymer({
-        isSmartComponent: true,
-        isInteractive: true,
-        isDraggable: true,
-        publish: {
-          currentTime: { value: 0, reflect: false },
-          youtubeUrl: { reflect: true }
-        },
-        currentTimeChanged: function() {
-          this.$.video.paused && this.currentTime > 0 && (this.$.video.currentTime = parseInt(this.currentTime));
-        },
-        created: function() {
-          this._pubsub_listening = false;
-          this._ready = false;
-          this._isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-          this._pubsub_subscribe('time', this.timeReceived);
-        },
-        attached: function() {
-          this.initVideo();
-        },
-        youtubeUrlChanged: function() {
-          var _this = this, videoUrl = this.youtubeUrl, videoId;
-          var hasYouTubeId = videoUrl.match(/v\=[a-z0-9-_]+/i);
-          if (hasYouTubeId !== null) videoId = hasYouTubeId[0].substr(2);
-          YoutubeVideo(videoId, function(video) {
-            if (video.status === 'fail') return;
-            var v = fragmentFromString('<video id="video" controls></video>').firstChild;
-            _this.shadowRoot.replaceChild(v, _this.$.video);
-            _this.$.video = v;
-            var mp4 = video.getSource("video/mp4", "high");
-            _this.innerHTML = mp4 ? '<source src="' + mp4.url + '" type="video/mp4">\n<track src="http://apfel.informatik.tu-chemnitz.de/chrooma/YouTubeCaptionGrabber/YouTubeCaptionService/GetCaption.ashx?v=' + videoId + '" kind="metadata" default>' : '';
-            _this.initVideo();
-          });
-        },
-        initVideo: function() {
-          var _this = this;
-
-          if(!this.$.video || this.children.length === 0 || this.$.video.children.length > 0) return;
-
-          for (var i = 0; i < this.children.length; i++) {
-            if (this.children[i].nodeName === 'SOURCE' || this.children[i].nodeName === 'TRACK') {
-              this.$.video.appendChild(document.importNode(this.children[i], true));
+      var video = decodeQueryString(video_info);
+      if (video.status === 'fail') return callback(video);
+      video.sources = (function(url_encoded_fmt_stream_map) {
+        var sources = {}, _ref = url_encoded_fmt_stream_map.split(',');
+        for (var _i = 0, _len = _ref.length; _i < _len; _i++) {
+          var urlEncodedStream    = _ref[_i],
+              stream              = decodeQueryString(urlEncodedStream),
+              type                = stream.type.split(';')[0],
+              quality             = stream.quality.split(',')[0];
+          stream.original_url = stream.url,
+          stream.url          = stream.url + '&signature=' + stream.sig;
+          sources[type + ' ' + quality] = stream;
+        }
+        return sources;
+      })(video.url_encoded_fmt_stream_map);
+      video.getSource = function(type, quality) {
+        var lowest = exact = null, _ref = this.sources, key, source;
+        for (key in _ref) {
+          source = _ref[key];
+          if (source.type.match(type)) {
+            if (source.quality.match(quality)) {
+              exact = source;
+            } else {
+              lowest = source;
             }
-          }
-
-          this.activeCues = [];
-
-          this.cueChanged = function() {
-            var activeCues = this.activeCues;
-
-            if (_this._skip) { _this.skip = false; return; }
-
-            if (_this.IsFirefox) {
-               if (activeCues.length === _this.activeCues.length) {
-                if (activeCues.length === 0) return;
-                var same = true;
-                for (var index = 0; index < activeCues.length; index++) {
-                  if (_this.activeCues.indexOf(activeCues[index]) === -1) {
-                    same = false;
-                    break;
-                  }
-                }
-                if (same) return;
-              }
-              _this.activeCues = [];
-            }
-
-            for (var index = 0; index < activeCues.length; index++) {
-              var cue = activeCues[index];
-              var cueData = JSON.parse(cue.text);
-              cueData.entries.forEach(function(entry) {
-                var type = entry.type;
-                var props = entry.properties;
-                if (type === 'image' || type === 'wiki' || type === 'tweets' || type === 'coordinates') _this._pubsub_publish(type, props.data);
-                if (type === 'subtitle') {
-                  if (props.text_de) _this._pubsub_publish('text_de', props.text_de);
-                  if (props.text_en) _this._pubsub_publish('text_en', props.text_en);
-                  if (props.text_fr) _this._pubsub_publish('text_fr', props.text_fr);
-                  if (props['text_en-US']) _this._pubsub_publish('text_en', props['text_en-US']);
-                }
-              });
-              if (_this._isFirefox) _this.activeCues.push(cue);
-            }
-          };
-
-          this.$.video.addEventListener('loadedmetadata', function() {
-            _this._ready = true;
-
-            this.addEventListener('timeupdate', function() {
-              _this.currentTime = this.currentTime;
-              _this._pubsub_publish('time', this.currentTime);
-              if (_this._isFirefox && textTrack) _this.cueChanged.bind(textTrack)();
-            });
-
-            if (_this.currentTime > 0) {
-              this.currentTime = parseInt(_this.currentTime);
-            }
-
-            var textTrack = null, textTracks = this.textTracks;
-            if (textTracks && textTracks.length > 0) {
-              for (var index = 0; index < textTracks.length; index++) {
-                if (textTracks[index].kind === 'metadata') {
-                  textTrack = textTracks[index];
-                  break;
-                }
-              }
-            }
-            if (!textTrack) return;
-            textTrack.mode = 'hidden';
-            if (!_this._isFirefox) textTrack.addEventListener('cuechange', _this.cueChanged);
-          });
-        },
-        timeReceived: function(message) {
-          if (parseInt(message.data) > 0 && this._ready) {
-            this.$.video.currentTime = parseInt(message.data);
           }
         }
+        return exact || lowest;
+      };
+      return callback(video);
+    });
+  };
+
+  function fragmentFromString(strHTML) {
+    var temp = document.createElement('template');
+    temp.innerHTML = strHTML;
+    return temp.content;
+  }
+
+  Polymer({
+    is: 'smart-video',
+    behaviors: [Polymer.SmartComponentBehavior],
+    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/smart-video-element.html',
+    properties: {
+      currentTime: {
+        type: Number,
+        notify: true,
+        observer: 'currentTimeChanged'
+      },
+      youtubeUrl: {
+        type: String,
+        notify: true
+      }
+    },
+    currentTimeChanged: function() {
+      this.$.video.paused && this.currentTime > 0 && (this.$.video.currentTime = parseInt(this.currentTime));
+    },
+    created: function() {
+      this._pubsub_listening = false;
+      this._videoReady = false;
+      this._isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    },
+    attached: function() {
+      this.initVideo();
+      this.subscribe('time', this.timeReceived);
+    },
+    detached: function() {
+      this.unsubscribe('time', this.timeReceived);
+    },
+    youtubeUrlChanged: function() {
+      var _this = this, videoUrl = this.youtubeUrl, videoId;
+      var hasYouTubeId = videoUrl.match(/v\=[a-z0-9-_]+/i);
+      if (hasYouTubeId !== null) videoId = hasYouTubeId[0].substr(2);
+      YoutubeVideo(videoId, function(video) {
+        if (video.status === 'fail') return;
+        var v = fragmentFromString('<video id="video" controls></video>').firstChild;
+        _this.shadowRoot.replaceChild(v, _this.$.video);
+        _this.$.video = v;
+        var mp4 = video.getSource("video/mp4", "high");
+        _this.innerHTML = mp4 ? '<source src="' + mp4.url + '" type="video/mp4">\n<track src="http://apfel.informatik.tu-chemnitz.de/chrooma/YouTubeCaptionGrabber/YouTubeCaptionService/GetCaption.ashx?v=' + videoId + '" kind="metadata" default>' : '';
+        _this.initVideo();
       });
-    })();
-  </script>
-</polymer-element>
+    },
+    initVideo: function() {
+      var _this = this;
+
+      if(!this.$.video || this.children.length === 0 || this.$.video.children.length > 0) return;
+
+      for (var i = 0; i < this.children.length; i++) {
+        if (this.children[i].nodeName === 'SOURCE' || this.children[i].nodeName === 'TRACK') {
+          this.$.video.appendChild(document.importNode(this.children[i], true));
+        }
+      }
+
+      this.activeCues = [];
+
+      this.cueChanged = function() {
+        var activeCues = this.activeCues;
+
+        if (_this._skip) { _this.skip = false; return; }
+
+        if (_this.IsFirefox) {
+           if (activeCues.length === _this.activeCues.length) {
+            if (activeCues.length === 0) return;
+            var same = true;
+            for (var index = 0; index < activeCues.length; index++) {
+              if (_this.activeCues.indexOf(activeCues[index]) === -1) {
+                same = false;
+                break;
+              }
+            }
+            if (same) return;
+          }
+          _this.activeCues = [];
+        }
+
+        for (var index = 0; index < activeCues.length; index++) {
+          var cue = activeCues[index];
+          var cueData = JSON.parse(cue.text);
+          cueData.entries.forEach(function(entry) {
+            var type = entry.type;
+            var props = entry.properties;
+            if (type === 'image' || type === 'wiki' || type === 'tweets' || type === 'coordinates') _this._pubsub_publish(type, props.data);
+            if (type === 'subtitle') {
+              if (props.text_de) _this._pubsub_publish('text_de', props.text_de);
+              if (props.text_en) _this._pubsub_publish('text_en', props.text_en);
+              if (props.text_fr) _this._pubsub_publish('text_fr', props.text_fr);
+              if (props['text_en-US']) _this._pubsub_publish('text_en', props['text_en-US']);
+            }
+          });
+          if (_this._isFirefox) _this.activeCues.push(cue);
+        }
+      };
+
+      this.$.video.addEventListener('loadedmetadata', function() {
+        _this._videoReady = true;
+
+        this.addEventListener('timeupdate', function() {
+          _this.currentTime = this.currentTime;
+          _this._pubsub_publish('time', this.currentTime);
+          if (_this._isFirefox && textTrack) _this.cueChanged.bind(textTrack)();
+        });
+
+        if (_this.currentTime > 0) {
+          this.currentTime = parseInt(_this.currentTime);
+        }
+
+        var textTrack = null, textTracks = this.textTracks;
+        if (textTracks && textTracks.length > 0) {
+          for (var index = 0; index < textTracks.length; index++) {
+            if (textTracks[index].kind === 'metadata') {
+              textTrack = textTracks[index];
+              break;
+            }
+          }
+        }
+        if (!textTrack) return;
+        textTrack.mode = 'hidden';
+        if (!_this._isFirefox) textTrack.addEventListener('cuechange', _this.cueChanged);
+      });
+    },
+    timeReceived: function(message) {
+      if (parseInt(message.data) > 0 && this._videoReady) {
+        this.$.video.currentTime = parseInt(message.data);
+      }
+    }
+  });
+})();
+</script>

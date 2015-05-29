@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="../webcomponentsjs/dist/webcomponents.min.js"></script>
-  <script>
-    Polymer = {dom: 'shadow'};
-  </script>
+  <script>Polymer = {dom: 'shadow'};</script>
+  <script src="../webcomponentsjs/dist/webcomponents-lite.min.js"></script>
   <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="../SmartComposition/SmartComponent.html">
+  <link rel="import" href="../SmartComposition/MessagingService.html">
   <link rel="import" href="campus-plan-element.html">
+  <link rel="import" href="smart-video-element.html">
   <style>
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
@@ -31,6 +32,19 @@
   <div style="width:calc(40% - 2em - 3px);">
     <campus-plan style="width:200px;height:200px" room="1/B204"></campus-plan>
   </div>
-  <script async defer src="../SmartComposition/SynchronizationService.js"></script>
+
+  <br style="clear:both">
+
+  <div style="width:calc(40% - 2em - 3px);">
+    <smart-video style="width:100%"></smart-video>
+  </div>
+
+  <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000"></messaging-service>
 </body>
 </html>
+<!--
+  javascript:Polymer={dom:'shadow'};l=document.createElement('link');l.rel='import';l.href='//apfel.informatik.tu-chemnitz.de/polymer/polymer/polymer.html';document.head.appendChild(l);w=document.createElement('script');w.src='//apfel.informatik.tu-chemnitz.de/polymer/webcomponentsjs/dist/webcomponents-lite.min.js';document.body.appendChild(w);s=document.createElement('script');s.src='//apfel.informatik.tu-chemnitz.de/polymer/SmartComposition/SynchronizationService.js';document.body.appendChild(s);setTimeout(function(){SynchronizationService.Session='apfel.informatik.tu-chemnitz.de';},2000);
+-->
+<!--
+  javascript:s=document.createElement('script');s.src='//apfel.informatik.tu-chemnitz.de/polymer/SmartComposition/SynchronizationService.js';document.body.appendChild(s);setTimeout(function(){SynchronizationService.Session='apfel.informatik.tu-chemnitz.de';},2000);
+-->

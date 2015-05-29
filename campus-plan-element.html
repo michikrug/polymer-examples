@@ -18,7 +18,8 @@
 <script>
   Polymer({
     is: 'campus-plan',
-    isSmartComponent: true,
+    behaviors: [Polymer.SmartComponentBehavior],
+    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/campus-plan-element.html',
     properties: {
       room: {
         type: String,
@@ -28,10 +29,10 @@
       }
     },
     attached: function() {
-      this._subscribe('room', this.roomReceived);
+      this.subscribe('room', this.roomReceived);
     },
     detached: function() {
-      this._unsubscribe('room', this.roomReceived);
+      this.unsubscribe('room', this.roomReceived);
     },
     roomChanged: function() {
       this.getRoomImage();
@@ -46,6 +47,5 @@
     roomReceived: function(message) {
       if (typeof message.data === 'string') this.room = message.data;
     }
-
   });
 </script>
