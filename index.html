@@ -36,7 +36,15 @@
   <br style="clear:both">
 
   <div style="width:calc(40% - 2em - 3px);">
-    <smart-video style="width:100%"></smart-video>
+    <smart-video style="width:100%">
+      <source src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/TV-20140307-0222-2601.webm.h264.mp4" type="video/mp4" />
+      <track src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/tagesschau-20140307.vtt" label="Metadata" kind="metadata" default />
+    </smart-video>
+  </div>
+
+  <div style="width:calc(40% - 2em - 3px);">
+    <smart-video style="width:100%" youtube-url="https://www.youtube.com/watch?v=Q-Qv1L_pA2c">
+    </smart-video>
   </div>
 
   <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000"></messaging-service>
