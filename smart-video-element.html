@@ -62,12 +62,6 @@
     });
   };
 
-  function fragmentFromString(strHTML) {
-    var temp = document.createElement('template');
-    temp.innerHTML = strHTML;
-    return temp.content;
-  }
-
   Polymer({
     is: 'smart-video',
     behaviors: [Polymer.SmartComponentBehavior],
@@ -105,22 +99,33 @@
       if (hasYouTubeId !== null) videoId = hasYouTubeId[0].substr(2);
       YoutubeVideo(videoId, function(video) {
         if (video.status === 'fail') return;
-        var v = fragmentFromString('<video id="video" controls></video>').firstChild;
-        _this.shadowRoot.replaceChild(v, _this.$.video);
+        var v = document.createElement('video');
+        v.id = 'video';
+        v.controls = true;
+        Polymer.dom(_this.root).replaceChild(v, _this.$.video);
         _this.$.video = v;
         var mp4 = video.getSource("video/mp4", "high");
-        _this.innerHTML = mp4 ? '<source src="' + mp4.url + '" type="video/mp4">\n<track src="http://apfel.informatik.tu-chemnitz.de/chrooma/YouTubeCaptionGrabber/YouTubeCaptionService/GetCaption.ashx?v=' + videoId + '" kind="metadata" default>' : '';
+        if (mp4) {
+          var s = document.createElement('source');
+          s.src = mp4.url;
+          s.type = 'video/mp4';
+          Polymer.dom(_this).appendChild(s);
+          var t = document.createElement('track');
+          t.src = 'http://apfel.informatik.tu-chemnitz.de/chrooma/YouTubeCaptionGrabber/YouTubeCaptionService/GetCaption.ashx?v=' + videoId;
+          t.kind = 'metadata';
+          Polymer.dom(_this).appendChild(t);
+        }
         _this.initVideo();
       });
     },
     initVideo: function() {
-      var _this = this;
+      var _this = this, c = Polymer.dom(this).children;
 
-      if(!this.$.video || this.children.length === 0 || this.$.video.children.length > 0) return;
+      if (!this.$.video || c.length === 0 || this.$.video.children.length > 0) return;
 
-      for (var i = 0; i < this.children.length; i++) {
-        if (this.children[i].nodeName === 'SOURCE' || this.children[i].nodeName === 'TRACK') {
-          this.$.video.appendChild(document.importNode(this.children[i], true));
+      for (var i = 0; i < c.length; i++) {
+        if (c[i].nodeName === 'SOURCE' || c[i].nodeName === 'TRACK') {
+          this.$.video.appendChild(document.importNode(c[i], true));
         }
       }
 
