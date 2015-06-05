@@ -41,28 +41,22 @@
       count: {
         type: Number,
         value: 4,
-        reflectToAttribute: true,
-        observer: 'countChanged'
+        reflectToAttribute: true
       },
       language: {
         type: String,
         value: 'en',
-        reflectToAttribute: true,
-        observer: 'languageChanged'
+        reflectToAttribute: true
       },
       query: {
         type: String,
-        reflectToAttribute: true,
-        observer: 'queryChanged'
+        reflectToAttribute: true
       }
     },
-    countChanged: function() {
-      this.query && this.getTweets();
-    },
-    queryChanged: function() {
-      this.getTweets();
-    },
-    languageChanged: function() {
+    observers: [
+      'propsChanged(count, language, query)'
+    ],
+    propsChanged: function() {
       this.query && this.getTweets();
     },
     getTweets: function() {
