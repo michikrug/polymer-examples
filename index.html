@@ -11,6 +11,7 @@
   <link rel="import" href="campus-plan-element.html">
   <link rel="import" href="smart-video-element.html">
   <link rel="import" href="google-map-element.html">
+  <link rel="import" href="twitter-tweets-element.html">
   <style>
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
@@ -47,6 +48,12 @@
     <smart-video style="width:100%" youtube-url="https://www.youtube.com/watch?v=Q-Qv1L_pA2c">
     </smart-video>
   </div>
+
+  <br style="clear:both">
+
+  <div style="width:calc(40% - 2em - 3px);">
+    <twitter-tweets style="width:300px;height:300px" query="Banana"></twitter-tweets>
+  </div>#
 
   <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000"></messaging-service>
 </body>

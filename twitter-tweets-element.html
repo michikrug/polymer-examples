@@ -1,72 +1,94 @@
-<polymer-element name="twitter-tweets" attributes="query language">
+<dom-module id="twitter-tweets">
+  <style>
+    :host {
+      display: inline-block;
+    }
+    #container {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      position: relative;
+      text-align: left;
+    }
+    span.highlight {
+      color: orange;
+    }
+    p {
+      padding-right: .5em;
+    }
+  </style>
   <template>
-    <style>
-      :host {
-        display: inline-block;
-      }
-      #container {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        position: relative;
-      }
-      span.highlight {
-        color: orange;
-      }
-      p {
-        padding-right: .5em;
-      }
-    </style>
     <div id="container">
       <content></content>
-      <template repeat="{{tweet in tweets}}">
+      <template is="dom-repeat" items="{{tweets}}" as="tweet">
         <p>
-          <strong>{{tweet.user.screen_name}}:</strong>
-          <template repeat="{{part in tweet.parts}}"><span class="{{ part.highlight ? 'highlight' : '' }}">{{part.text}}</span></template>
+          <strong>{{tweet.user.screen_name}}<span>:</span></strong>
+          <template is="dom-repeat" items="{{tweet.parts}}" as="part"><span class$="{{part.highlight}}">{{part.text}}</span></template>
         </p>
       </template>
     </div>
   </template>
-  <script defer src="../SmartComposition/xhrq.js"></script>
-  <script>
-    Polymer({
-      isSmartComponent: true,
-      publish: {
-        count: { value: '4', reflect: true },
-        language: { value: 'en', reflect: true },
-        query: { reflect: true }
+</dom-module>
+
+<script defer src="../SmartComposition/xhrq.js"></script>
+
+<script>
+  Polymer({
+    is: 'twitter-tweets',
+    behaviors: [Polymer.SmartComponentBehavior],
+    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/twitter-tweets-element.html',
+    properties: {
+      count: {
+        type: Number,
+        value: 4,
+        reflectToAttribute: true,
+        observer: 'countChanged'
       },
-      countChanged: function() {
-        this.query && this.getTweets();
+      language: {
+        type: String,
+        value: 'en',
+        reflectToAttribute: true,
+        observer: 'languageChanged'
       },
-      queryChanged: function() {
-        this.getTweets();
-      },
-      languageChanged: function() {
-        this.query && this.getTweets();
-      },
-      getTweets: function() {
-        var _this = this;
-        var re = new RegExp('(' + this.query + ')', 'ig');
-        window.xhrq.get('https://api.twitter.com/1.1/search/tweets.json', function(tweets) {
-          _this.tweets = tweets && tweets.statuses || [];
-          _this.tweets.forEach(function(tweet) {
-            tweet.parts = tweet.text.split(re).map(function(part) {
-              return { text: part, highlight: part.toLowerCase() === _this.query.toLowerCase()};
-            });
-          });
-        }, {
-          q: this.query,
-          lang: this.language || 'en',
-          count: this.count || 4
-        }, 'json');
-      },
-      created: function() {
-        this._pubsub_subscribe('tweets', this.queryReceived);
-      },
-      queryReceived: function(message) {
-        if (typeof message.data === 'string') this.query = message.data;
+      query: {
+        type: String,
+        reflectToAttribute: true,
+        observer: 'queryChanged'
       }
-    });
-  </script>
-</polymer-element>
+    },
+    countChanged: function() {
+      this.query && this.getTweets();
+    },
+    queryChanged: function() {
+      this.getTweets();
+    },
+    languageChanged: function() {
+      this.query && this.getTweets();
+    },
+    getTweets: function() {
+      var _this = this;
+      var re = new RegExp('(' + this.query + ')', 'ig');
+      window.xhrq.get('https://api.twitter.com/1.1/search/tweets.json', function(tweets) {
+        _this.tweets = tweets && tweets.statuses || [];
+        _this.tweets.forEach(function(tweet) {
+          tweet.parts = tweet.text.split(re).map(function(part) {
+            return { text: part, highlight: part.toLowerCase() === _this.query.toLowerCase() ? 'highlight' : ''};
+          });
+        });
+      }, {
+        q: this.query,
+        lang: this.language || 'en',
+        count: this.count || 4
+      }, 'json');
+    },
+    attached: function() {
+      this.subscribe('tweets', this.queryReceived);
+    },
+    detached: function() {
+      this.unsubscribe('tweets', this.queryReceived);
+    },
+    queryReceived: function(message) {
+      if (typeof message.data === 'string') this.query = message.data;
+    }
+  });
+</script>
