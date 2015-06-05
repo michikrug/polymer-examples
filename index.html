@@ -12,6 +12,8 @@
   <link rel="import" href="smart-video-element.html">
   <link rel="import" href="google-map-element.html">
   <link rel="import" href="twitter-tweets-element.html">
+  <link rel="import" href="semantic-extraction-element.html">
+  <link rel="import" href="translate-text-element.html">
   <style>
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
@@ -53,7 +55,10 @@
 
   <div style="width:calc(40% - 2em - 3px);">
     <twitter-tweets style="width:300px;height:300px" query="Banana"></twitter-tweets>
-  </div>#
+  </div>
+
+  <translate-text from="de" to="en"></translate-text>
+  <semantic-extraction></semantic-extraction>
 
   <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000"></messaging-service>
 </body>
