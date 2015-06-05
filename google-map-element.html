@@ -20,7 +20,7 @@
   'use strict';
 
     window.gmapsLoaded = function() {
-      window.dispatchEvent(new Event('gmapsLoaded'));
+      Polymer.Base.fire('gmapsLoaded', null, {node: window});
     };
 
     var loadScript = function(src, callback) {
@@ -93,7 +93,7 @@
         }
 
         this._style_observer = new MutationObserver(function(mutations) {
-          _this.$.gmap.dispatchEvent(new Event('resize'));
+          Polymer.Base.fire('resize', null, {node: _this.$.gmap, bubbles: false});
         });
       },
       attached: function() {
@@ -133,10 +133,10 @@
         });
 
         this.addEventListener('resize', function() {
-          gmap.dispatchEvent(new Event('resize'));
+          Polymer.Base.fire('resize', null, {node: gmap, bubbles: false});
         });
 
-        gmap.dispatchEvent(new Event('resize'));
+        this.fire('resize');
       },
       queryAddress: function(address) {
         var _this = this;
