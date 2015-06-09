@@ -1,43 +1,63 @@
-<polymer-element name="google-images" attributes="query">
+<dom-module id="google-images">
+  <style>
+    :host {
+      display: inline-block;
+    }
+    #container {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      position: relative;
+    }
+  </style>
   <template>
-    <style>
-      :host {
-        display: inline-block;
-      }
-      #container {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        position: relative;
-      }
-    </style>
     <div id="container">
-      <template repeat="{{result in results}}">
+      <template is="dom-repeat" items="{{results}}" as="result">
         <img style="width:100%;" src="{{result.url}}" onerror="(navigator.userAgent.toLowerCase().indexOf('firefox') === -1) && this.parentNode.removeChild(this);">
       </template>
     </div>
   </template>
-  <script defer src="../SmartComposition/xhrq.js"></script>
-  <script>
-    Polymer({
-      isSmartComponent: true,
-      isInteractive: true,
-      publish: {
-        query: { reflect: true },
-        results: { presetable: true }
+</dom-module>
+
+<script defer src="../SmartComposition/xhrq.js"></script>
+
+<script>
+  Polymer({
+    is: 'google-images',
+    behaviors: [Polymer.SmartComponentBehavior],
+    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-images-element.html',
+    properties: {
+      count: {
+        type: Number,
+        value: 4,
+        reflectToAttribute: true
       },
-      queryChanged: function() {
-        var _this = this;
-        window.xhrq.get('https://ajax.googleapis.com/ajax/services/search/images?v=1.0', function(data) {
-          _this.results = data.responseData && data.responseData.results || [];
-        }, { q: this.query }, 'json');
+      results: {
+        type: String,
+        notify: true
       },
-      created: function() {
-        this._pubsub_subscribe('image', this.queryReceived);
-      },
-      queryReceived: function(message) {
-        if (typeof message.data === 'string') this.query = message.data;
+      query: {
+        type: String,
+        reflectToAttribute: true
       }
-    });
-  </script>
-</polymer-element>
+    },
+    observers: [
+      'queryChanged(count, query)'
+    ],
+    queryChanged: function() {
+      var _this = this;
+      window.xhrq.get('https://ajax.googleapis.com/ajax/services/search/images?v=1.0', function(data) {
+        _this.results = data.responseData && data.responseData.results || [];
+      }, { q: this.query, rsz: this.count }, 'json');
+    },
+    attached: function() {
+      this.subscribe('image', this.queryReceived);
+    },
+    detached: function() {
+      this.unsubscribe('image', this.queryReceived);
+    },
+    queryReceived: function(message) {
+      if (typeof message.data === 'string') this.query = message.data;
+    }
+  });
+</script>

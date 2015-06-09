@@ -15,6 +15,7 @@
   <link rel="import" href="semantic-extraction-element.html">
   <link rel="import" href="translate-text-element.html">
   <link rel="import" href="wikipedia-extract-element.html">
+  <link rel="import" href="google-images-element.html">
   <style>
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
@@ -63,6 +64,10 @@
 
   <div style="width:calc(40% - 2em - 3px);">
     <wikipedia-extract style="width:500px;height:300px" query="Banana"></wikipedia-extract>
+  </div>
+
+  <div style="width:calc(40% - 2em - 3px);">
+    <google-images style="width:400px;height:400px" query="Banana"></google-images>
   </div>
 
   <translate-text from="de" to="en"></translate-text>
