@@ -14,6 +14,7 @@
   <link rel="import" href="twitter-tweets-element.html">
   <link rel="import" href="semantic-extraction-element.html">
   <link rel="import" href="translate-text-element.html">
+  <link rel="import" href="wikipedia-extract-element.html">
   <style>
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
@@ -30,11 +31,14 @@
     View source of website:<br>
     <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/index.html">INDEX</a>
   </div>
+
   <div style="width:calc(40% - 2em - 3px);">
     <campus-plan style="width:200px;height:200px" room="1/B204"></campus-plan>
   </div>
+
   <div style="width:calc(40% - 2em - 3px);">
-    <google-map style="width:300px;height:300px" address="Chemnitz" zoom="12"></google-map>
+      <google-map style="width:300px;height:300px" zoom="12"></google-map>
+      <google-map-geocoder address="Chemnitz"></google-map-geocoder>
   </div>
 
   <br style="clear:both">
@@ -54,7 +58,11 @@
   <br style="clear:both">
 
   <div style="width:calc(40% - 2em - 3px);">
-    <twitter-tweets style="width:300px;height:300px" query="Banana"></twitter-tweets>
+    <twitter-tweets style="width:500px;height:300px" query="Banana"></twitter-tweets>
+  </div>
+
+  <div style="width:calc(40% - 2em - 3px);">
+    <wikipedia-extract style="width:500px;height:300px" query="Banana"></wikipedia-extract>
   </div>
 
   <translate-text from="de" to="en"></translate-text>

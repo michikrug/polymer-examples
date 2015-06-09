@@ -59,11 +59,6 @@
           value: 8,
           reflectToAttribute: true,
           observer: 'zoomChanged'
-        },
-        address: {
-          type: String,
-          reflectToAttribute: true,
-          observer: 'addressChanged'
         }
       },
       observers: [
@@ -77,9 +72,6 @@
       },
       zoomChanged: function() {
         this._map && this._map.setZoom(this.zoom);
-      },
-      addressChanged: function() {
-        this.address && this.queryAddress(this.address);
       },
       created: function() {
         var _this = this;
@@ -100,18 +92,15 @@
         this._style_observer.observe(this, { attributes : true, attributeFilter : ['style'] });
         this.createMap();
         this.subscribe('coordinates', this.coordinatesReceived);
-        this.subscribe('address', this.addressReceived);
       },
       detached: function() {
         this._style_observer.disconnect();
         this.unsubscribe('coordinates', this.coordinatesReceived);
-        this.unsubscribe('address', this.addressReceived);
       },
       createMap: function() {
         var _this = this, gmap = this.$.gmap;
         if (typeof google !== 'object' || !google.maps || this._map) return;
 
-        this._geocoder = new google.maps.Geocoder();
         this._map = new google.maps.Map(gmap, { zoom: this.zoom, disableDefaultUI: true, mapTypeControl: true });
 
         if (this.address) this.queryAddress(this.address);
@@ -138,20 +127,72 @@
 
         this.fire('resize');
       },
+      coordinatesReceived: function(message) {
+        if (message.data.lat) this.lat = message.data.lat;
+        if (message.data.lng) this.lng = message.data.lng;
+      }
+    });
+
+
+    Polymer({
+      is: 'google-map-geocoder',
+      behaviors: [Polymer.SmartComponentBehavior],
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-map-element.html',
+      properties: {
+        address: {
+          type: String,
+          reflectToAttribute: true,
+          observer: 'addressChanged'
+        },
+        lat: {
+          type: Number,
+          notify: true
+        },
+        lng: {
+          type: Number,
+          notify: true
+        }
+      },
+      addressChanged: function() {
+        this.address && this.queryAddress(this.address);
+      },
+      created: function() {
+        var _this = this;
+
+        window.addEventListener('gmapsLoaded', function() {
+          _this.initGeocoder();
+        });
+
+        if (typeof google !== 'object' || !google.maps) {
+          loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
+        }
+      },
+      attached: function() {
+        this.subscribe('address', this.addressReceived);
+      },
+      detached: function() {
+        this._style_observer.disconnect();
+        this.unsubscribe('address', this.addressReceived);
+      },
+      initGeocoder: function() {
+        if (typeof google !== 'object' || !google.maps) return;
+        this._geocoder = new google.maps.Geocoder();
+        this.addressChanged();
+      },
       queryAddress: function(address) {
         var _this = this;
-        if (!this._geocoder) return;
+        if (!this._geocoder) {
+          this.initGeocoder();
+          return;
+        }
         this._geocoder.geocode({ 'address': address }, function(results, status) {
           if (status === google.maps.GeocoderStatus.OK) {
             var center = results[0].geometry.location;
             _this.lat = center.lat();
             _this.lng = center.lng();
+            _this.publish('coordinates', { lat: _this.lat, lng: _this.lng });
           }
         });
-      },
-      coordinatesReceived: function(message) {
-        if (message.data.lat) this.lat = message.data.lat;
-        if (message.data.lng) this.lng = message.data.lng;
       },
       addressReceived: function(message) {
         if (typeof message.data === 'string') {
