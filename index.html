@@ -3,11 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <script>Polymer = {dom: 'shadow'};</script>
   <script src="../webcomponentsjs/dist/webcomponents-lite.min.js"></script>
   <link rel="import" href="../polymer/dist/polymer.html">
+
   <link rel="import" href="../SmartComposition/SmartComponent.html">
   <link rel="import" href="../SmartComposition/MessagingService.html">
+
   <link rel="import" href="campus-plan-element.html">
   <link rel="import" href="smart-video-element.html">
   <link rel="import" href="google-map-element.html">
@@ -16,14 +19,19 @@
   <link rel="import" href="translate-text-element.html">
   <link rel="import" href="wikipedia-extract-element.html">
   <link rel="import" href="google-images-element.html">
+
   <style>
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
     body { font-size: 16px; font-family: sans-serif; margin: 1em; }
     body > div { vertical-align: top; padding: 1em; margin: 1em; border: 1px solid silver; text-align: center; display: inline-block; width: calc(100% - 2em - 3px); }
+    body > div.w50 { width:calc(50% - 2em - 3px); }
     div.description { font-family: monospace; border: 1px silver dashed; width: calc(100% - 2em - 3px);}
     @media (max-width: 900px) {
       body > div { display:block; width:calc(100% - 2em - 3px) !important; }
+    }
+    @media (min-width: 1400px) {
+      body > div.w50 { width:calc(33.333% - 2em - 3px); }
     }
   </style>
 </head>
@@ -33,41 +41,36 @@
     <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/index.html">INDEX</a>
   </div>
 
-  <div style="width:calc(40% - 2em - 3px);">
-    <campus-plan style="width:200px;height:200px" room="1/B204"></campus-plan>
+  <div class="w50">
+    <campus-plan style="width:300px;height:300px" room="1/B204"></campus-plan>
   </div>
 
-  <div style="width:calc(40% - 2em - 3px);">
+  <div class="w50">
       <google-map style="width:300px;height:300px" zoom="12"></google-map>
       <google-map-geocoder address="Chemnitz"></google-map-geocoder>
   </div>
 
-  <br style="clear:both">
-
-  <div style="width:calc(40% - 2em - 3px);">
+  <div class="w50">
     <smart-video style="width:100%">
       <source src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/TV-20140307-0222-2601.webm.h264.mp4" type="video/mp4" />
       <track src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/tagesschau-20140307.vtt" label="Metadata" kind="metadata" default />
     </smart-video>
   </div>
 
-  <div style="width:calc(40% - 2em - 3px);">
-    <smart-video style="width:100%" youtube-url="https://www.youtube.com/watch?v=Q-Qv1L_pA2c">
-    </smart-video>
+  <div class="w50">
+    <smart-video style="width:100%" youtube-url="https://www.youtube.com/watch?v=Q-Qv1L_pA2c"></smart-video>
   </div>
 
-  <br style="clear:both">
-
-  <div style="width:calc(40% - 2em - 3px);">
-    <twitter-tweets style="width:500px;height:300px" query="Banana"></twitter-tweets>
+  <div class="w50">
+    <twitter-tweets style="overflow:auto;max-height:300px" query="Banana"></twitter-tweets>
   </div>
 
-  <div style="width:calc(40% - 2em - 3px);">
-    <wikipedia-extract style="width:500px;height:300px" query="Banana"></wikipedia-extract>
+  <div class="w50">
+    <wikipedia-extract style="overflow:auto;max-height:300px" query="Banana"></wikipedia-extract>
   </div>
 
-  <div style="width:calc(40% - 2em - 3px);">
-    <google-images style="width:400px;height:400px" query="Banana"></google-images>
+  <div class="w50">
+    <google-images style="overflow:auto;max-height:300px;width:100%" query="Banana"></google-images>
   </div>
 
   <translate-text from="de" to="en"></translate-text>
