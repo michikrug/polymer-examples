@@ -1,0 +1,95 @@
+<dom-module id="nytimes-news">
+  <style>
+    :host {
+      display: inline-block;
+    }
+    #container {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      position: relative;
+      text-align: left;
+    }
+    ul {
+      list-style: none;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    ul > li {
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <template>
+    <div id="container">
+      <content></content>
+      <h3>New York Times</h3>
+      <select on-change="changeFeed">
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml">NYTimes.com Home Page (U.S.)</option>
+        <option value="http://rss.nytimes.com/services/xml/rss/nyt/InternationalHome.xml" selected>NYTimes.com Home Page (International Edition)</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/World.xml">World</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/Business.xml">Business</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/Technology.xml">Technology</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/Sports.xml">Sports</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/Science.xml">Science</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/Health.xml">Health</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/Arts.xml">Arts</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/Style.xml">Style</option>
+        <option value="http://www.nytimes.com/services/xml/rss/nyt/Travel.xml">Travel</option>
+      </select>
+      <br><br>
+      <ul>
+      <template is="dom-repeat" items="{{newslist}}" as="news">
+        <li on-click="publishText"><span>{{news.title}}</span><span style="display:none">{{news.description}}</span></li>
+      </template>
+      </ul>
+    </div>
+  </template>
+</dom-module>
+
+<script defer src="../SmartComposition/xhrq.js"></script>
+
+<script>
+  Polymer({
+    is: 'nytimes-news',
+    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/nytimes-news-element.html',
+    properties: {
+      feed: {
+        type: String,
+        value: '',
+        observer: 'getNews'
+      },
+      newslist: {
+        type: Object,
+        value: [],
+        notify: true
+      }
+    },
+    changeFeed: function(e) {
+      this.feed = e.target.value;
+    },
+    publishText: function(e) {
+      this.publish('text_en', e.target.nextSibling.textContent);
+    },
+    getNews: function() {
+      var _this = this;
+      window.xhrq.get(this.feed, function(result) {
+        var newsItems = result.querySelectorAll('item');
+        var newsList = [];
+        for (var i = 0; i < newsItems.length; i++) {
+          var newsItem = {};
+          newsItem.title = newsItems[i].querySelector('title').textContent;
+          newsItem.description = newsItems[i].querySelector('description').textContent.replace(/(<.*>)/ig, '');
+          newsItem.link = newsItems[i].querySelector('link').getAttribute('href') || newsItems[i].querySelector('link').textContent;
+          newsList.push(newsItem);
+        }
+        _this.newslist = newsList;
+      }, 'xml');
+    },
+    attached: function() {
+      this.feed = this.$$('select').value;
+    }
+  });
+</script>
