@@ -19,6 +19,9 @@
   <link rel="import" href="translate-text-element.html">
   <link rel="import" href="wikipedia-extract-element.html">
   <link rel="import" href="google-images-element.html">
+  <link rel="import" href="youtube-search-element.html">
+  <link rel="import" href="nytimes-news-element.html">
+  <link rel="import" href="plain-text-element.html">
 
   <style>
     html { box-sizing: border-box; }
@@ -41,36 +44,41 @@
     <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/index.html">INDEX</a>
   </div>
 
-  <div class="w50">
+  <!--<div class="w50">
     <campus-plan style="width:300px;height:300px" room="1/B204"></campus-plan>
+  </div>-->
+
+  <div class="w50">
+    <nytimes-news style="overflow:auto;max-height:300px"></nytimes-news>
   </div>
 
   <div class="w50">
-      <google-map style="width:300px;height:300px" zoom="12"></google-map>
-      <google-map-geocoder address="Chemnitz"></google-map-geocoder>
+    <youtube-search style="overflow:auto;max-height:300px;width:100%" query="Iran"></youtube-search>
   </div>
 
   <div class="w50">
     <smart-video style="width:100%">
-      <source src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/TV-20140307-0222-2601.webm.h264.mp4" type="video/mp4" />
-      <track src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/tagesschau-20140307.vtt" label="Metadata" kind="metadata" default />
+      <!--<source src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/TV-20140307-0222-2601.webm.h264.mp4" type="video/mp4" />
+      <track src="//apfel.informatik.tu-chemnitz.de/chrooma/webcomponents/tagesschau-20140307.vtt" label="Metadata" kind="metadata" default />-->
     </smart-video>
+    <plain-text style="width:100%"></plain-text>
   </div>
 
   <div class="w50">
-    <smart-video style="width:100%" youtube-url="https://www.youtube.com/watch?v=Q-Qv1L_pA2c"></smart-video>
+      <google-map style="width:300px;height:300px" zoom="12"></google-map>
+      <google-map-geocoder address="Iran"></google-map-geocoder>
   </div>
 
   <div class="w50">
-    <twitter-tweets style="overflow:auto;max-height:300px" query="Banana"></twitter-tweets>
+    <twitter-tweets style="overflow:auto;max-height:300px" query="Iran"></twitter-tweets>
   </div>
 
   <div class="w50">
-    <wikipedia-extract style="overflow:auto;max-height:300px" query="Banana"></wikipedia-extract>
+    <wikipedia-extract style="overflow:auto;max-height:300px" query="Iran"></wikipedia-extract>
   </div>
 
   <div class="w50">
-    <google-images style="overflow:auto;max-height:300px;width:100%" query="Banana"></google-images>
+    <google-images style="overflow:auto;max-height:300px;width:100%" query="Iran"></google-images>
   </div>
 
   <translate-text from="de" to="en"></translate-text>
