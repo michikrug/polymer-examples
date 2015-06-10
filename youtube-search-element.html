@@ -1,0 +1,95 @@
+<dom-module id="youtube-search">
+  <style>
+    :host {
+      display: inline-block;
+    }
+    #container {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      position: relative;
+      text-align: left;
+    }
+    ul {
+      list-style: none;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    ul > li img {
+      width: 30%;
+      float: left;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    ul > li {
+      clear: both;
+    }
+  </style>
+  <template>
+    <div id="container">
+      <content></content>
+      <ul>
+      <template is="dom-repeat" items="{{videos}}" as="video">
+        <li><a href="#" data-video-id$="{{video.id.videoId}}"><img src="{{video.snippet.thumbnails.high.url}}"><span>{{video.snippet.title}}</span></a></li>
+      </template>
+      </ul>
+    </div>
+  </template>
+</dom-module>
+
+<script defer src="../SmartComposition/xhrq.js"></script>
+
+<script>
+  Polymer({
+    is: 'youtube-search',
+    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/youtube-search-element.html',
+    properties: {
+      count: {
+        type: Number,
+        value: 5,
+        reflectToAttribute: true
+      },
+      query: {
+        type: String,
+        reflectToAttribute: true
+      }
+    },
+    observers: [
+      'propsChanged(count, query)'
+    ],
+    propsChanged: function() {
+      this.query && this.getVideos();
+    },
+    getVideos: function() {
+      var _this = this;
+      window.xhrq.get('https://www.googleapis.com/youtube/v3/search', function(videos) {
+        _this.videos = videos && videos.items;
+      }, {
+        part: 'snippet',
+        q: this.query,
+        maxResults: this.count || 5,
+        type: 'video',
+        videoEmbeddable: true,
+        videoCaption: 'closedCaption',
+        relevanceLanguage: 'en'
+      }, 'json');
+      setTimeout(function() {
+        var links = Polymer.dom(_this.root).querySelectorAll('ul > li > a');
+        for (var i = 0; i < links.length; i++) {
+          links[i].addEventListener('click', function(e) { _this.publish('youtube-video', this.getAttribute('data-video-id')); e.preventDefault(); return false; }, false);
+        }
+      }, 1000);
+    },
+    attached: function() {
+      this.subscribe('search', this.queryReceived);
+    },
+    detached: function() {
+      this.unsubscribe('search', this.queryReceived);
+    },
+    queryReceived: function(message) {
+      if (typeof message.data === 'string') this.query = message.data;
+    }
+  });
+</script>
