@@ -64,7 +64,7 @@
 
   Polymer({
     is: 'smart-video',
-    behaviors: [Polymer.SmartComponentBehavior],
+    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
     fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/smart-video-element.html',
     properties: {
       currentTime: {
@@ -92,16 +92,17 @@
       this.publish('time', this.currentTime);
     },
     created: function() {
-      this._pubsub_listening = false;
       this._videoReady = false;
       this._isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     },
     attached: function() {
       this.initVideo();
       this.subscribe('time', this.timeReceived);
+      this.subscribe('youtube-video', this.ytReceived);
     },
     detached: function() {
       this.unsubscribe('time', this.timeReceived);
+      this.unsubscribe('youtube-video', this.ytReceived);
     },
     youtubeUrlChanged: function() {
       var _this = this, videoUrl = this.youtubeUrl, videoId;
@@ -109,6 +110,12 @@
       if (hasYouTubeId !== null) videoId = hasYouTubeId[0].substr(2);
       YoutubeVideo(videoId, function(video) {
         if (video.status === 'fail') return;
+        
+        var ts = Polymer.dom(_this).querySelectorAll('track,source');
+        for (var i = 0; i < ts.length; i++) {
+          Polymer.dom(_this).removeChild(ts[i]);
+        }
+
         var v = document.createElement('video');
         v.id = 'video';
         v.controls = true;
@@ -172,7 +179,9 @@
               if (props.text_de) _this.publish('text_de', props.text_de);
               if (props.text_en) _this.publish('text_en', props.text_en);
               if (props.text_fr) _this.publish('text_fr', props.text_fr);
+              if (props.text_es) _this.publish('text_es', props.text_es);
               if (props['text_en-US']) _this.publish('text_en', props['text_en-US']);
+              if (props['text_en-GB']) _this.publish('text_en', props['text_en-GB']);
             }
           });
           if (_this._isFirefox) _this.activeCues.push(cue);
@@ -204,6 +213,9 @@
         textTrack.mode = 'hidden';
         if (!_this._isFirefox) textTrack.addEventListener('cuechange', _this.cueChanged);
       });
+    },
+    ytReceived: function(message) {
+      this.youtubeUrl = 'https://www.youtube.com/watch?v=' + message.data;
     },
     timeReceived: function(message) {
       if (parseInt(message.data) > 0 && this._videoReady) {
