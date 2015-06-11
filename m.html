@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script>Polymer = {dom: 'shadow'};</script>
+  <script src="../webcomponentsjs/dist/webcomponents-lite.min.js"></script>
+  <link rel="import" href="../polymer/dist/polymer.html">
+
+  <link rel="import" href="../SmartComposition/SmartComponent.html">
+  <link rel="import" href="../SmartComposition/MessagingService.html">
+
+  <link rel="import" href="campus-plan-element.html">
+  <link rel="import" href="smart-video-element.html">
+  <link rel="import" href="google-map-element.html">
+  <link rel="import" href="twitter-tweets-element.html">
+  <link rel="import" href="semantic-extraction-element.html">
+  <link rel="import" href="translate-text-element.html">
+  <link rel="import" href="wikipedia-extract-element.html">
+  <link rel="import" href="google-images-element.html">
+  <link rel="import" href="youtube-search-element.html">
+  <link rel="import" href="nytimes-news-element.html">
+  <link rel="import" href="plain-text-element.html">
+
+  <style>
+    html { box-sizing: border-box; }
+    *, *:before, *:after { box-sizing: inherit; }
+    body { font-size: 16px; font-family: sans-serif; margin: 1em; background-color: #fff; }
+    body > div { vertical-align: top; padding: 1em; margin: 1em; border: 1px solid silver; text-align: center; display: inline-block; width: calc(100% - 2em - 3px); }
+    body > div.w50 { width:calc(50% - 2em - 3px); }
+    div.description { font-family: monospace; border: 1px silver dashed; width: calc(100% - 2em - 3px);}
+    @media (max-width: 900px) {
+      body > div { display:block; width:calc(100% - 2em - 3px) !important; }
+    }
+    @media (min-width: 1400px) {
+      body > div.w50 { width:calc(33.333% - 2em - 3px); }
+    }
+    :-webkit-full-screen #container { padding: 1em; }
+    :-moz-full-screen #container { padding: 1em; }
+    :-ms-fullscreen #container { padding: 1em; }
+    :-webkit-full-screen { position: fixed; top: 0; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
+    :-moz-full-screen { position: fixed; top: 0; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
+    :-ms-fullscreen { position: fixed; top: 0; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
+  </style>
+
+</head>
+<body>
+  <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000"></messaging-service>
+</body>
+</html>
