@@ -97,11 +97,11 @@
     },
     attached: function() {
       this.initVideo();
-      this.subscribe('time', this.timeReceived);
+      //this.subscribe('time', this.timeReceived);
       this.subscribe('youtube-video', this.ytReceived);
     },
     detached: function() {
-      this.unsubscribe('time', this.timeReceived);
+      //this.unsubscribe('time', this.timeReceived);
       this.unsubscribe('youtube-video', this.ytReceived);
     },
     youtubeUrlChanged: function() {
