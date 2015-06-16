@@ -1,47 +1,49 @@
-<script defer src="../SmartComposition/xhrq.js"></script>
+<dom-module id="semantic-extraction">
 
-<script>
-  Polymer({
-    is: 'semantic-extraction',
-    behaviors: [Polymer.SmartComponentBehavior],
-    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/semantic-extraction-element.html',
-    apikey: 'b9543ff024368b60add72be32a27d69ad40b51fc',
-    attached: function() {
-      this.subscribe('text_en', this.textReceived);
-    },
-    detached: function() {
-      this.unsubscribe('text_en', this.textReceived);
-    },
-    textReceived: function(message, token) {
-      if (typeof message.data !== 'string') return;
-      var _this = this;
-      window.xhrq.get('http://access.alchemyapi.com/calls/text/TextGetRankedNamedEntities', function (data) {
-        data.entities && data.entities.forEach(function(entity) {
-          entity.text = entity.text.replace('.','');
-          switch(entity.type) {
-            case 'City':
-            case 'Country':
-            case 'Continent':
-            case 'StateOrCounty':
-            case 'GeographicFeature':
-              _this.publish('address', entity.text, token);
-              _this.publish('image', entity.text, token);
-              _this.publish('wiki', entity.text, token);
-              _this.publish('search', entity.text, token);
-              break;
-            case 'Person':
-            case 'Company':
-            case 'Organization':
-              _this.publish('tweets', entity.text, token);
-              _this.publish('image', entity.text, token);
-              _this.publish('wiki', entity.text, token);
-              _this.publish('search', entity.text, token);
-              break;
-            default:
-              break;
-          }
-        });
-      }, { apikey: this.apikey, outputMode: 'json', text: message.data }, 'json');
-    }
-  });
-</script>
+  <script>
+    Polymer({
+      is: 'semantic-extraction',
+      behaviors: [Polymer.SmartComponentBehavior],
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/semantic-extraction-element.html',
+      apikey: 'b9543ff024368b60add72be32a27d69ad40b51fc',
+      attached: function() {
+        this.subscribe('text_en', this.textReceived);
+      },
+      detached: function() {
+        this.unsubscribe('text_en', this.textReceived);
+      },
+      textReceived: function(message, token) {
+        if (typeof message.data !== 'string') return;
+        var _this = this;
+        window.xhrq.get('http://access.alchemyapi.com/calls/text/TextGetRankedNamedEntities', function (data) {
+          data.entities && data.entities.forEach(function(entity) {
+            entity.text = entity.text.replace('.','');
+            switch(entity.type) {
+              case 'City':
+              case 'Country':
+              case 'Continent':
+              case 'StateOrCounty':
+              case 'GeographicFeature':
+                _this.publish('address', entity.text, token);
+                _this.publish('image', entity.text, token);
+                _this.publish('wiki', entity.text, token);
+                _this.publish('search', entity.text, token);
+                break;
+              case 'Person':
+              case 'Company':
+              case 'Organization':
+                _this.publish('tweets', entity.text, token);
+                _this.publish('image', entity.text, token);
+                _this.publish('wiki', entity.text, token);
+                _this.publish('search', entity.text, token);
+                break;
+              default:
+                break;
+            }
+          });
+        }, { apikey: this.apikey, outputMode: 'json', text: message.data }, 'json');
+      }
+    });
+  </script>
+
+</dom-module>

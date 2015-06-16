@@ -1,4 +1,5 @@
 <dom-module id="youtube-search">
+
   <style>
     :host {
       display: inline-block;
@@ -31,6 +32,7 @@
       background-color: rgba(0,0,0,.1);
     }
   </style>
+
   <template>
     <div id="container">
       <content></content>
@@ -41,57 +43,56 @@
       </ul>
     </div>
   </template>
-</dom-module>
 
-<script defer src="../SmartComposition/xhrq.js"></script>
-
-<script>
-  Polymer({
-    is: 'youtube-search',
-    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
-    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/youtube-search-element.html',
-    properties: {
-      count: {
-        type: Number,
-        value: 5,
-        reflectToAttribute: true
+  <script>
+    Polymer({
+      is: 'youtube-search',
+      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/youtube-search-element.html',
+      properties: {
+        count: {
+          type: Number,
+          value: 5,
+          reflectToAttribute: true
+        },
+        query: {
+          type: String,
+          reflectToAttribute: true
+        }
       },
-      query: {
-        type: String,
-        reflectToAttribute: true
+      observers: [
+        'propsChanged(count, query)'
+      ],
+      propsChanged: function() {
+        this.query && this.getVideos();
+      },
+      publishVideo: function(e) {
+        this.publish('youtube-video', e.target.getAttribute('data-video-id'));
+      },
+      getVideos: function() {
+        var _this = this;
+        window.xhrq.get('https://www.googleapis.com/youtube/v3/search', function(videos) {
+          _this.videos = videos && videos.items;
+        }, {
+          part: 'snippet',
+          q: this.query,
+          maxResults: this.count || 5,
+          type: 'video',
+          videoEmbeddable: true,
+          videoCaption: 'closedCaption',
+          relevanceLanguage: 'en'
+        }, 'json');
+      },
+      attached: function() {
+        this.subscribe('search', this.queryReceived);
+      },
+      detached: function() {
+        this.unsubscribe('search', this.queryReceived);
+      },
+      queryReceived: function(message) {
+        if (typeof message.data === 'string') this.query = message.data;
       }
-    },
-    observers: [
-      'propsChanged(count, query)'
-    ],
-    propsChanged: function() {
-      this.query && this.getVideos();
-    },
-    publishVideo: function(e) {
-      this.publish('youtube-video', e.target.getAttribute('data-video-id'));
-    },
-    getVideos: function() {
-      var _this = this;
-      window.xhrq.get('https://www.googleapis.com/youtube/v3/search', function(videos) {
-        _this.videos = videos && videos.items;
-      }, {
-        part: 'snippet',
-        q: this.query,
-        maxResults: this.count || 5,
-        type: 'video',
-        videoEmbeddable: true,
-        videoCaption: 'closedCaption',
-        relevanceLanguage: 'en'
-      }, 'json');
-    },
-    attached: function() {
-      this.subscribe('search', this.queryReceived);
-    },
-    detached: function() {
-      this.unsubscribe('search', this.queryReceived);
-    },
-    queryReceived: function(message) {
-      if (typeof message.data === 'string') this.query = message.data;
-    }
-  });
-</script>
+    });
+  </script>
+
+</dom-module>

@@ -1,4 +1,5 @@
 <dom-module id="nytimes-news">
+
   <style>
     :host {
       display: inline-block;
@@ -24,6 +25,7 @@
       background-color: rgba(0,0,0,.1);
     }
   </style>
+
   <template>
     <div id="container">
       <content></content>
@@ -49,50 +51,49 @@
       </ul>
     </div>
   </template>
-</dom-module>
 
-<script defer src="../SmartComposition/xhrq.js"></script>
-
-<script>
-  Polymer({
-    is: 'nytimes-news',
-    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
-    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/nytimes-news-element.html',
-    properties: {
-      feed: {
-        type: String,
-        value: '',
-        observer: 'getNews'
-      },
-      newslist: {
-        type: Object,
-        value: [],
-        notify: true
-      }
-    },
-    changeFeed: function(e) {
-      this.feed = e.target.value;
-    },
-    publishText: function(e) {
-      this.publish('text_en', e.target.nextSibling.textContent);
-    },
-    getNews: function() {
-      var _this = this;
-      window.xhrq.get(this.feed, function(result) {
-        var newsItems = result.querySelectorAll('item');
-        var newsList = [];
-        for (var i = 0; i < newsItems.length; i++) {
-          var newsItem = {};
-          newsItem.title = newsItems[i].querySelector('title').textContent;
-          newsItem.description = newsItems[i].querySelector('description').textContent.replace(/(<.*>)/ig, '');
-          newsItem.link = newsItems[i].querySelector('link').getAttribute('href') || newsItems[i].querySelector('link').textContent;
-          newsList.push(newsItem);
+  <script>
+    Polymer({
+      is: 'nytimes-news',
+      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/nytimes-news-element.html',
+      properties: {
+        feed: {
+          type: String,
+          value: '',
+          observer: 'getNews'
+        },
+        newslist: {
+          type: Object,
+          value: [],
+          notify: true
         }
-        _this.newslist = newsList;
-      }, 'xml');
-    },
-    attached: function() {
-      this.feed = this.$$('select').value;
-    }
-  });
-</script>
+      },
+      changeFeed: function(e) {
+        this.feed = e.target.value;
+      },
+      publishText: function(e) {
+        this.publish('text_en', e.target.nextSibling.textContent);
+      },
+      getNews: function() {
+        var _this = this;
+        window.xhrq.get(this.feed, function(result) {
+          var newsItems = result.querySelectorAll('item');
+          var newsList = [];
+          for (var i = 0; i < newsItems.length; i++) {
+            var newsItem = {};
+            newsItem.title = newsItems[i].querySelector('title').textContent;
+            newsItem.description = newsItems[i].querySelector('description').textContent.replace(/(<.*>)/ig, '');
+            newsItem.link = newsItems[i].querySelector('link').getAttribute('href') || newsItems[i].querySelector('link').textContent;
+            newsList.push(newsItem);
+          }
+          _this.newslist = newsList;
+        }, 'xml');
+      },
+      attached: function() {
+        this.feed = this.$$('select').value;
+      }
+    });
+  </script>
+
+</dom-module>

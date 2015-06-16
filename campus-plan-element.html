@@ -1,4 +1,5 @@
 <dom-module id="campus-plan">
+
   <style>
     :host {
       display: inline-block;
@@ -8,44 +9,44 @@
       height: 100%;
     }
   </style>
+
   <template>
     <img src$="{{roomImageUrl}}">
   </template>
-</dom-module>
 
-<script defer src="../SmartComposition/xhrq.js"></script>
-
-<script>
-  Polymer({
-    is: 'campus-plan',
-    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
-    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/campus-plan-element.html',
-    properties: {
-      room: {
-        type: String,
-        notify: true,
-        reflectToAttribute: true,
-        observer: 'roomChanged'
+  <script>
+    Polymer({
+      is: 'campus-plan',
+      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/campus-plan-element.html',
+      properties: {
+        room: {
+          type: String,
+          notify: true,
+          reflectToAttribute: true,
+          observer: 'roomChanged'
+        }
+      },
+      attached: function() {
+        this.subscribe('room', this.roomReceived);
+      },
+      detached: function() {
+        this.unsubscribe('room', this.roomReceived);
+      },
+      roomChanged: function() {
+        this.getRoomImage();
+      },
+      getRoomImage: function() {
+        var _this = this;
+        window.xhrq.get('https://www.tu-chemnitz.de/tu/lageplan/campusfinder/campusfinder2014.php?raum=' + this.room, function(data) {
+          var p = data.substr(data.lastIndexOf('kartezeichnen.php?'));
+          _this.roomImageUrl = 'https://www.tu-chemnitz.de/tu/lageplan/campusfinder/' + p.substr(0, p.indexOf('"'));
+        });
+      },
+      roomReceived: function(message) {
+        if (typeof message.data === 'string') this.room = message.data;
       }
-    },
-    attached: function() {
-      this.subscribe('room', this.roomReceived);
-    },
-    detached: function() {
-      this.unsubscribe('room', this.roomReceived);
-    },
-    roomChanged: function() {
-      this.getRoomImage();
-    },
-    getRoomImage: function() {
-      var _this = this;
-      window.xhrq.get('https://www.tu-chemnitz.de/tu/lageplan/campusfinder/campusfinder2014.php?raum=' + this.room, function(data) {
-        var p = data.substr(data.lastIndexOf('kartezeichnen.php?'));
-        _this.roomImageUrl = 'https://www.tu-chemnitz.de/tu/lageplan/campusfinder/' + p.substr(0, p.indexOf('"'));
-      });
-    },
-    roomReceived: function(message) {
-      if (typeof message.data === 'string') this.room = message.data;
-    }
-  });
-</script>
+    });
+  </script>
+
+</dom-module>

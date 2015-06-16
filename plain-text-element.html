@@ -1,4 +1,5 @@
 <dom-module id="plain-text">
+
   <style>
     :host {
       display: inline-block;
@@ -14,43 +15,45 @@
       padding-right: .5em;
     }
   </style>
+
   <template>
     <div id="container"><p>{{data}}</p></div>
   </template>
-</dom-module>
 
-<script defer src="../SmartComposition/xhrq.js"></script>
+  <script defer src="../SmartComposition/xhrq.js"></script>
 
-<script>
-  Polymer({
-    is: 'plain-text',
-    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
-    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/plain-text-element.html',
-    properties: {
-      subscription: {
-        type: String,
-        value: 'text_en',
-        reflectToAttribute: true,
-        observer: 'subscriptionChanged'
+  <script>
+    Polymer({
+      is: 'plain-text',
+      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/plain-text-element.html',
+      properties: {
+        subscription: {
+          type: String,
+          value: 'text_en',
+          reflectToAttribute: true,
+          observer: 'subscriptionChanged'
+        },
+        data: {
+          type: Object
+        }
       },
-      data: {
-        type: Object
+      subscriptionChanged: function(newVal, oldVal) {
+        if (this.isAttached) {
+          this.unsubscribe(oldVal, this.messsageReceived);
+          this.subscribe(newVal, this.messsageReceived);
+        }
+      },
+      attached: function() {
+        this.subscribe(this.subscription, this.messsageReceived);
+      },
+      detached: function() {
+        this.unsubscribe(this.subscription, this.messsageReceived);
+      },
+      messsageReceived: function(message) {
+        this.data = message.data;
       }
-    },
-    subscriptionChanged: function(newVal, oldVal) {
-      if (this.isAttached) {
-        this.unsubscribe(oldVal, this.messsageReceived);
-        this.subscribe(newVal, this.messsageReceived);
-      }
-    },
-    attached: function() {
-      this.subscribe(this.subscription, this.messsageReceived);
-    },
-    detached: function() {
-      this.unsubscribe(this.subscription, this.messsageReceived);
-    },
-    messsageReceived: function(message) {
-      this.data = message.data;
-    }
-  });
-</script>
+    });
+  </script>
+
+</dom-module>

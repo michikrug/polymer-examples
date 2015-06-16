@@ -1,4 +1,5 @@
 <dom-module id="google-images">
+
   <style>
     :host {
       display: inline-block;
@@ -10,6 +11,7 @@
       position: relative;
     }
   </style>
+
   <template>
     <div id="container">
       <template is="dom-repeat" items="{{results}}" as="result">
@@ -17,47 +19,46 @@
       </template>
     </div>
   </template>
-</dom-module>
 
-<script defer src="../SmartComposition/xhrq.js"></script>
-
-<script>
-  Polymer({
-    is: 'google-images',
-    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
-    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-images-element.html',
-    properties: {
-      count: {
-        type: Number,
-        value: 4,
-        reflectToAttribute: true
+  <script>
+    Polymer({
+      is: 'google-images',
+      behaviors: [Polymer.SmartComponentBehavior, Polymer.fileLocation],
+      InteractionBehavior: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-images-element.html',
+      properties: {
+        count: {
+          type: Number,
+          value: 4,
+          reflectToAttribute: true
+        },
+        results: {
+          type: String,
+          notify: true
+        },
+        query: {
+          type: String,
+          reflectToAttribute: true
+        }
       },
-      results: {
-        type: String,
-        notify: true
+      observers: [
+        'queryChanged(count, query)'
+      ],
+      queryChanged: function() {
+        var _this = this;
+        window.xhrq.get('https://ajax.googleapis.com/ajax/services/search/images?v=1.0', function(data) {
+          _this.results = data.responseData && data.responseData.results || [];
+        }, { q: this.query, rsz: this.count }, 'json');
       },
-      query: {
-        type: String,
-        reflectToAttribute: true
+      attached: function() {
+        this.subscribe('image', this.queryReceived);
+      },
+      detached: function() {
+        this.unsubscribe('image', this.queryReceived);
+      },
+      queryReceived: function(message) {
+        if (typeof message.data === 'string') this.query = message.data;
       }
-    },
-    observers: [
-      'queryChanged(count, query)'
-    ],
-    queryChanged: function() {
-      var _this = this;
-      window.xhrq.get('https://ajax.googleapis.com/ajax/services/search/images?v=1.0', function(data) {
-        _this.results = data.responseData && data.responseData.results || [];
-      }, { q: this.query, rsz: this.count }, 'json');
-    },
-    attached: function() {
-      this.subscribe('image', this.queryReceived);
-    },
-    detached: function() {
-      this.unsubscribe('image', this.queryReceived);
-    },
-    queryReceived: function(message) {
-      if (typeof message.data === 'string') this.query = message.data;
-    }
-  });
-</script>
+    });
+  </script>
+
+</dom-module>
