@@ -6,16 +6,37 @@
       behaviors: [Polymer.SmartComponentBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/semantic-extraction-element.html',
       apikey: 'b9543ff024368b60add72be32a27d69ad40b51fc',
+      properties: {
+        text: {
+          type: String,
+          reflectToAttribute: true,
+          observer: 'textChanged'
+        },
+        location: {
+          type: String,
+          reflectToAttribute: true
+        },
+        person: {
+          type: String,
+          reflectToAttribute: true
+        },
+        organization: {
+          type: String,
+          reflectToAttribute: true
+        }
+      },
       attached: function() {
         this.subscribe('text_en', this.textReceived);
       },
       detached: function() {
         this.unsubscribe('text_en', this.textReceived);
       },
-      textReceived: function(message, token) {
-        if (typeof message.data !== 'string') return;
-        var _this = this;
+      textChanged: function() {
+        var _this = this, token = this.token;
         window.xhrq.get('http://access.alchemyapi.com/calls/text/TextGetRankedNamedEntities', function (data) {
+          _this.location = '';
+          _this.person = '';
+          _this.organization = '';
           data.entities && data.entities.forEach(function(entity) {
             entity.text = entity.text.replace('.','');
             switch(entity.type) {
@@ -24,14 +45,22 @@
               case 'Continent':
               case 'StateOrCounty':
               case 'GeographicFeature':
+                _this.location = entity.text;
                 _this.publish('address', entity.text, token);
                 _this.publish('image', entity.text, token);
                 _this.publish('wiki', entity.text, token);
                 _this.publish('search', entity.text, token);
                 break;
               case 'Person':
+                _this.person = entity.text;
+                _this.publish('tweets', entity.text, token);
+                _this.publish('image', entity.text, token);
+                _this.publish('wiki', entity.text, token);
+                _this.publish('search', entity.text, token);
+                break;
               case 'Company':
               case 'Organization':
+                _this.organization = entity.text;
                 _this.publish('tweets', entity.text, token);
                 _this.publish('image', entity.text, token);
                 _this.publish('wiki', entity.text, token);
@@ -41,7 +70,12 @@
                 break;
             }
           });
-        }, { apikey: this.apikey, outputMode: 'json', text: message.data }, 'json');
+        }, { apikey: this.apikey, outputMode: 'json', text: this.text }, 'json');
+      },
+      textReceived: function(message, token) {
+        if (typeof message.data !== 'string') return;
+        this.text = message.data;
+        this.token = token;
       }
     });
   </script>
