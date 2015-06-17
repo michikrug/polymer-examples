@@ -58,6 +58,10 @@
         query: {
           type: String,
           reflectToAttribute: true
+        },
+        videoUrl: {
+          type: String,
+          reflectToAttribute: true
         }
       },
       observers: [
@@ -67,7 +71,8 @@
         this.query && this.getVideos();
       },
       publishVideo: function(e) {
-        this.publish('youtube-video', e.target.getAttribute('data-video-id'));
+        this.videoUrl = 'https://www.youtube.com/watch?v=' + e.target.getAttribute('data-video-id');
+        this.publish('youtube-video', this.videoUrl);
       },
       getVideos: function() {
         var _this = this;
