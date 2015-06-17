@@ -67,13 +67,19 @@
           type: Object,
           value: [],
           notify: true
+        },
+        text: {
+          type: String,
+          reflectToAttribute: true
         }
       },
       changeFeed: function(e) {
         this.feed = e.target.value;
       },
       publishText: function(e) {
-        this.publish('text_en', e.target.nextSibling.textContent);
+        var c = e.target.nodeName === 'LI' ? e.target.children[1] : e.target.nextSibling;
+        this.text = c.textContent;
+        this.publish('text_en', this.text);
       },
       getNews: function() {
         var _this = this;
