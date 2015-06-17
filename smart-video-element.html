@@ -75,7 +75,12 @@
         },
         youtubeUrl: {
           type: String,
+          reflectToAttribute: true,
           observer: 'youtubeUrlChanged'
+        },
+        text: {
+          type: String,
+          reflectToAttribute: true
         }
       },
       currentTimeChanged: function() {
@@ -176,6 +181,7 @@
               var props = entry.properties;
               if (type === 'image' || type === 'wiki' || type === 'tweets' || type === 'coordinates') _this.publish(type, props.data);
               if (type === 'subtitle') {
+                _this.text = props.text_en || props['text_en-US'] || props['text_en-GB'];
                 if (props.text_de) _this.publish('text_de', props.text_de);
                 if (props.text_en) _this.publish('text_en', props.text_en);
                 if (props.text_fr) _this.publish('text_fr', props.text_fr);
@@ -215,7 +221,7 @@
         });
       },
       ytReceived: function(message) {
-        this.youtubeUrl = 'https://www.youtube.com/watch?v=' + message.data;
+        this.youtubeUrl = message.data;
       },
       timeReceived: function(message) {
         if (parseInt(message.data) > 0 && this._videoReady) {
