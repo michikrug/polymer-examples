@@ -1,0 +1,94 @@
+<dom-module id="google-geocoder">
+
+  <script>
+  (function() {
+    'use strict';
+
+      window.gmapsLoaded = function() {
+        Polymer.Base.fire('gmapsLoaded', null, {node: window});
+      };
+
+      var loadScript = function(src, callback) {
+        var s = document.querySelector('script[src="' + src + '"]');
+        if (s) {
+          callback && (s.loaded && callback.call()) || s.addEventListener('load', callback);
+          return;
+        }
+        s = document.createElement('script');
+        s.async = 1;
+        s.defer = 1;
+        s.src = src;
+        s.addEventListener('load', function() { this.loaded = true; callback && callback.call(); });
+        document.body.appendChild(s);
+      };
+
+      Polymer({
+        is: 'google-geocoder',
+        behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+        fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-geocoder-element.html',
+        properties: {
+          address: {
+            type: String,
+            reflectToAttribute: true,
+            observer: 'addressChanged'
+          },
+          lat: {
+            type: Number,
+            notify: true
+          },
+          lng: {
+            type: Number,
+            notify: true
+          }
+        },
+        addressChanged: function() {
+          this.address && this.queryAddress(this.address);
+        },
+        created: function() {
+          var _this = this;
+
+          window.addEventListener('gmapsLoaded', function() {
+            _this.initGeocoder();
+          });
+
+          if (typeof google !== 'object' || !google.maps) {
+            loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
+          }
+        },
+        attached: function() {
+          this.subscribe('address', this.addressReceived);
+        },
+        detached: function() {
+          this._style_observer.disconnect();
+          this.unsubscribe('address', this.addressReceived);
+        },
+        initGeocoder: function() {
+          if (typeof google !== 'object' || !google.maps) return;
+          this._geocoder = new google.maps.Geocoder();
+          this.addressChanged();
+        },
+        queryAddress: function(address) {
+          var _this = this;
+          if (!this._geocoder) {
+            this.initGeocoder();
+            return;
+          }
+          this._geocoder.geocode({ 'address': address }, function(results, status) {
+            if (status === google.maps.GeocoderStatus.OK) {
+              var center = results[0].geometry.location;
+              _this.lat = center.lat();
+              _this.lng = center.lng();
+              _this.publish('coordinates', { lat: _this.lat, lng: _this.lng });
+            }
+          });
+        },
+        addressReceived: function(message) {
+          if (typeof message.data === 'string') {
+            this.address = message.data;
+          }
+        }
+      });
+  })();
+  </script>
+
+</dom-module>
