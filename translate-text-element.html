@@ -16,6 +16,15 @@
           type: String,
           value: 'en',
           reflectToAttribute: true
+        },
+        text: {
+          type: String,
+          reflectToAttribute: true,
+          observer: 'textChanged'
+        },
+        translatedText: {
+          type: String,
+          reflectToAttribute: true
         }
       },
       attached: function() {
@@ -65,9 +74,12 @@
           text: text
         }, 'json');
       },
+      textChanged: function() {
+        this.translateText(this.text, function(data) { this.translatedText = data; this.publish('text_' + this.to, data); });
+      },
       textReceived: function(message) {
         if (typeof message.data !== 'string' || !this._accessToken) return;
-        this.translateText(message.data, function(data) { this.publish('text_' + this.to, data) });
+        this.text = message.data;
       }
     });
   </script>
