@@ -1,0 +1,33 @@
+<dom-module id="component-selector">
+
+  <template>
+    New component:
+    <select id="list"></select>
+    <button on-click="addComponent">Add</button>
+  </template>
+
+  <script>
+    Polymer({
+        is: 'component-selector',
+        fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/component-selector-element.html',
+        properties: {
+          
+        },
+        attached: function() {
+          var o = Polymer.dom(this).children;
+          var s = this.$.list;
+          for (var i = 0; i < o.length; i++) {
+            if (o[i].nodeName === 'OPTION') {
+              s.appendChild(document.importNode(o[i], true));
+            }
+          }
+        },
+        addComponent: function() {
+          var e = document.createElement(this.$.list.value);
+          e.style.height = e.style.width = '400px';
+          document.body.appendChild(e);
+        }
+    });
+  </script>
+
+</dom-module>

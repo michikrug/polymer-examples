@@ -13,6 +13,7 @@
 
   <link rel="import" href="campus-plan-element.html">
   <link rel="import" href="smart-video-element.html">
+  <link rel="import" href="google-geocoder-element.html">
   <link rel="import" href="google-map-element.html">
   <link rel="import" href="twitter-tweets-element.html">
   <link rel="import" href="semantic-extraction-element.html">
@@ -22,14 +23,15 @@
   <link rel="import" href="youtube-search-element.html">
   <link rel="import" href="nytimes-news-element.html">
   <link rel="import" href="plain-text-element.html">
+  <link rel="import" href="component-selector-element.html">
 
   <style>
     html { box-sizing: border-box; }
     *, *:before, *:after { box-sizing: inherit; }
     body { font-size: 16px; font-family: sans-serif; margin: 1em; background-color: #fff; }
-    body > div { vertical-align: top; padding: 1em; margin: 1em; border: 1px solid silver; text-align: center; display: inline-block; width: calc(100% - 2em - 3px); }
+    body > div { border: 1px solid #aaa; padding: 1em; vertical-align: top; margin: 1em; text-align: center; display: inline-block; width: calc(100% - 2em - 3px); }
     body > div.w50 { width:calc(50% - 2em - 3px); }
-    div.description { font-family: monospace; border: 1px silver dashed; width: calc(100% - 2em - 3px);}
+    div.description { font-family: monospace; border: 1px silver dotted; width: calc(100% - 2em - 3px);}
     @media (max-width: 900px) {
       body > div { display:block; width:calc(100% - 2em - 3px) !important; }
     }
@@ -39,9 +41,13 @@
     :-webkit-full-screen #container { padding: 1em; }
     :-moz-full-screen #container { padding: 1em; }
     :-ms-fullscreen #container { padding: 1em; }
-    :-webkit-full-screen { position: fixed; top: 0; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
-    :-moz-full-screen { position: fixed; top: 0; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
-    :-ms-fullscreen { position: fixed; top: 0; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
+    :-webkit-full-screen { position: fixed !important; top: 0 !important; left: 0 !important; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
+    :-moz-full-screen { position: fixed !important; top: 0 !important; left: 0 !important; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
+    :-ms-fullscreen { position: fixed !important; top: 0 !important; left: 0 !important; font-size: 1.5em; width: 100% !important; height: 100% !important; max-height: none !important; max-width: none !important; background: #fff; }
+
+    /*smart-video, google-map, youtube-search, nytimes-news, twitter-tweets, wikipedia-extract, google-images, plain-text {
+      border: 1px #bbb dotted;
+    }*/
   </style>
 
 </head>
@@ -49,6 +55,22 @@
   <div class="description">
     View source of website:<br>
     <a href="view-source:http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/index.html">INDEX</a>
+  </div>
+
+  <div>
+    <component-selector>
+      <option value="nytimes-news">NY TIMES NEWS</option>
+      <option value="plain-text">PLAIN TEXT</option>
+      <option value="translate-text">TRANSLATE TEXT</option>
+      <option value="semantic-extraction">SEMANTIC EXTRACTION</option>
+      <option value="youtube-search">YOUTUBE SEARCH</option>
+      <option value="smart-video">SMART VIDEO</option>
+      <option value="google-images">GOOGLE IMAGES</option>
+      <option value="google-geocoder">GOOGLE GEOCODER</option>
+      <option value="google-map">GOOGLE MAP</option>
+      <option value="wikipedia-extract">WIKIPEDIA EXTRACT</option>
+      <option value="twitter-tweets">TWITTER TWEETS</option>
+    </component-selector>
   </div>
 
   <div class="w50">
@@ -83,10 +105,6 @@
   <div class="w50">
     <google-images style="overflow:auto;max-height:300px;width:100%" query="Iran"></google-images>
   </div>
-
-  <!--<div class="w50">
-    <campus-plan style="width:300px;height:300px" room="1/B204"></campus-plan>
-  </div>-->
 
   <translate-text from="de" to="en"></translate-text>
   <semantic-extraction></semantic-extraction>
