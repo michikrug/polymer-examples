@@ -11,6 +11,10 @@
   <link rel="import" href="../SmartComposition/SmartComponent.html">
   <link rel="import" href="../SmartComposition/MessagingService.html">
 
+  <script>
+    Polymer.SmartComponentBehavior.properties._pubsub_publishing.value = false;
+  </script>
+
   <link rel="import" href="campus-plan-element.html">
   <link rel="import" href="smart-video-element.html">
   <link rel="import" href="google-geocoder-element.html">
@@ -23,6 +27,7 @@
   <link rel="import" href="youtube-search-element.html">
   <link rel="import" href="nytimes-news-element.html">
   <link rel="import" href="plain-text-element.html">
+  <link rel="import" href="attribute-link-element.html">
   <link rel="import" href="component-selector-element.html">
 
   <style>
@@ -90,8 +95,13 @@
   </div>
 
   <div class="w50">
-    <google-map style="width:300px;height:300px" zoom="12"></google-map>
-    <google-map-geocoder address="Iran"></google-map-geocoder>
+    <google-map class="g1" style="width:300px;height:300px" zoom="12"></google-map>
+    <google-geocoder class="g1" address="Iran"></google-geocoder>
+  </div>
+
+  <div class="w50">
+    <google-map class="g2" style="width:300px;height:300px" zoom="12"></google-map>
+    <google-geocoder class="g2" address="Iran"></google-geocoder>
   </div>
 
   <div class="w50">
@@ -110,6 +120,28 @@
   <semantic-extraction></semantic-extraction>
 
   <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000"></messaging-service>
+
+
+  <attribute-link source="google-geocoder.g1@lat" target="google-map.g1@lat"></attribute-link>
+  <attribute-link source="google-geocoder.g1@lng" target="google-map.g1@lng"></attribute-link>
+
+  <attribute-link source="google-geocoder.g2@lat" target="google-map.g2@lat"></attribute-link>
+  <attribute-link source="google-geocoder.g2@lng" target="google-map.g2@lng"></attribute-link>
+
+  <attribute-link source="translate-text[to='en']@translated-text" target="semantic-extraction@text"></attribute-link>
+
+  <attribute-link source="nytimes-news@text" target="semantic-extraction@text"></attribute-link>
+
+  <attribute-link source="youtube-search@video-url" target="smart-video@youtube-url"></attribute-link>
+  <attribute-link source="smart-video@text" target="semantic-extraction@text"></attribute-link>
+
+  <attribute-link source="semantic-extraction@location" target="google-geocoder.g1@address"></attribute-link>
+
+  <attribute-link source="semantic-extraction@person" target="google-images@query"></attribute-link>
+
+  <attribute-link source="semantic-extraction@organization" target="wikipedia-extract@query"></attribute-link>
+  <attribute-link source="wikipedia-extract@query" target="twitter-tweets@query"></attribute-link>
+
 </body>
 </html>
 <!--

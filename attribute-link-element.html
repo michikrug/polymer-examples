@@ -1,0 +1,56 @@
+<dom-module id="attribute-link">
+
+  <script>
+    Polymer({
+      is: 'attribute-link',
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/attribute-link-element.html',
+      properties: {
+        source: {
+          type: String,
+          reflectToAttribute: true,
+          observer: 'sourceChanged'
+        },
+        target: {
+          type: String,
+          reflectToAttribute: true
+        }
+      },
+      created: function() {
+        this.mutationObservers = [];
+      },
+      sourceChanged: function() {
+        var i;
+        for (i in this.mutationObservers) {
+          this.mutationObservers[i].disconnect();
+        }
+        this.mutationObservers = [];
+        var t = this.parseConnectionString(this.source);
+        if (!t) return;
+        var elements = document.querySelectorAll(t.selector);
+        for (i = 0, c = elements.length; i < c; i++) {
+          var mutationObserver = new MutationObserver(this.handlePropertyChange.bind(this, t.property));
+          mutationObserver.observe(elements[i], { attributes: true });
+          this.mutationObservers.push(mutationObserver);
+        }
+      },
+      handlePropertyChange: function(property, records) {
+        for (var r in records) {
+          if (records[r].attributeName === property) {
+            var val = records[r].target.getAttribute(property);
+            var t = this.parseConnectionString(this.target);
+            if (!t) return;
+            var elements = document.querySelectorAll(t.selector);
+            for (var i = 0, c = elements.length; i < c; i++) {
+              if (val !== elements[i].getAttribute(t.property)) elements[i].setAttribute(t.property, val);
+            }
+          }
+        }
+      },
+      parseConnectionString: function(str) {
+        var p = str.lastIndexOf('@');
+        return (p < 0) ? null : { selector: str.substr(0, p), property: str.substr(p+1) };
+      }
+    });
+  </script>
+
+</dom-module>
