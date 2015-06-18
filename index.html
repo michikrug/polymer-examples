@@ -122,7 +122,7 @@
   <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000"></messaging-service>
 
 
-  <attribute-link source="google-geocoder.g1@lat"           target="google-map.g1@lat" transformation="parseFloat(source) + 1"></attribute-link>
+  <attribute-link source="google-geocoder.g1@lat"           target="google-map.g1@lat" transformation="parseFloat(source) + 0"></attribute-link>
   <attribute-link source="google-geocoder.g1@coordinates"   target="google-map.g1@lng" transformation="(JSON.parse(source)).lng"></attribute-link>
   
   <!--attribute-link source="google-geocoder.g1@lng"        target="google-map.g1@lng"></attribute-link-->
@@ -137,6 +137,10 @@
   <attribute-link source="youtube-search@video-url"         target="smart-video@youtube-url"></attribute-link>
   <attribute-link source="smart-video@text"                 target="semantic-extraction@text"></attribute-link>
 
+  <attribute-link source="semantic-extraction@location"     target="youtube-search@query"></attribute-link>
+  <attribute-link source="semantic-extraction@person"       target="youtube-search@query"></attribute-link>
+  <attribute-link source="semantic-extraction@organization" target="youtube-search@query"></attribute-link>
+
   <attribute-link source="semantic-extraction@location"     target="google-geocoder.g1@address"></attribute-link>
 
   <attribute-link source="semantic-extraction@person"       target="google-images@query"></attribute-link>
@@ -147,8 +151,5 @@
 </body>
 </html>
 <!--
-  javascript:Polymer={dom:'shadow'};l=document.createElement('link');l.rel='import';l.href='//apfel.informatik.tu-chemnitz.de/polymer/polymer/polymer.html';document.head.appendChild(l);w=document.createElement('script');w.src='//apfel.informatik.tu-chemnitz.de/polymer/webcomponentsjs/dist/webcomponents-lite.min.js';document.body.appendChild(w);s=document.createElement('script');s.src='//apfel.informatik.tu-chemnitz.de/polymer/SmartComposition/SynchronizationService.js';document.body.appendChild(s);setTimeout(function(){SynchronizationService.Session='apfel.informatik.tu-chemnitz.de';},2000);
--->
-<!--
-  javascript:s=document.createElement('script');s.src='//apfel.informatik.tu-chemnitz.de/polymer/SmartComposition/SynchronizationService.js';document.body.appendChild(s);setTimeout(function(){SynchronizationService.Session='apfel.informatik.tu-chemnitz.de';},2000);
+javascript:Polymer={dom:'shadow'};(function(){d=document;h=d.head;b=d.body;s=d.createElement('script');s.src='//apfel.informatik.tu-chemnitz.de/polymer/webcomponentsjs/dist/webcomponents-lite.min.js';h.appendChild(s);l=d.createElement('link');l.rel='import';l.href='//apfel.informatik.tu-chemnitz.de/polymer/polymer/dist/polymer.html';h.appendChild(l);c=d.createElement('link');c.rel='import';c.href='//apfel.informatik.tu-chemnitz.de/polymer/SmartComposition/SmartComponent.html';h.appendChild(c);e=d.createElement('link');e.rel='import';e.href='//apfel.informatik.tu-chemnitz.de/polymer/SmartComposition/MessagingService.html';h.appendChild(e);m=d.createElement('messaging-service');m.endpoint='http://apfel.informatik.tu-chemnitz.de:9000';m.session='apfel.informatik.tu-chemnitz.de';b.appendChild(m);})();
 -->
