@@ -41,6 +41,10 @@
             type: Number,
             reflectToAttribute: true,
             notify: true
+          },
+          coordinates: {
+            type: Object,
+            reflectToAttribute: true
           }
         },
         addressChanged: function() {
@@ -80,6 +84,7 @@
               var center = results[0].geometry.location;
               _this.lat = center.lat();
               _this.lng = center.lng();
+              _this.coordinates = { lat: _this.lat, lng: _this.lng };
               _this.publish('coordinates', { lat: _this.lat, lng: _this.lng });
             }
           });

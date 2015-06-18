@@ -122,25 +122,27 @@
   <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000"></messaging-service>
 
 
-  <attribute-link source="google-geocoder.g1@lat" target="google-map.g1@lat"></attribute-link>
-  <attribute-link source="google-geocoder.g1@lng" target="google-map.g1@lng"></attribute-link>
-
-  <attribute-link source="google-geocoder.g2@lat" target="google-map.g2@lat"></attribute-link>
-  <attribute-link source="google-geocoder.g2@lng" target="google-map.g2@lng"></attribute-link>
+  <attribute-link source="google-geocoder.g1@lat"           target="google-map.g1@lat" transformation="parseFloat(source) + 1"></attribute-link>
+  <attribute-link source="google-geocoder.g1@coordinates"   target="google-map.g1@lng" transformation="(JSON.parse(source)).lng"></attribute-link>
+  
+  <!--attribute-link source="google-geocoder.g1@lng"        target="google-map.g1@lng"></attribute-link-->
+  
+  <attribute-link source="google-geocoder.g2@lat"           target="google-map.g2@lat"></attribute-link>
+  <attribute-link source="google-geocoder.g2@lng"           target="google-map.g2@lng"></attribute-link>
 
   <attribute-link source="translate-text[to='en']@translated-text" target="semantic-extraction@text"></attribute-link>
 
-  <attribute-link source="nytimes-news@text" target="semantic-extraction@text"></attribute-link>
+  <attribute-link source="nytimes-news@text"                target="semantic-extraction@text"></attribute-link>
+  
+  <attribute-link source="youtube-search@video-url"         target="smart-video@youtube-url"></attribute-link>
+  <attribute-link source="smart-video@text"                 target="semantic-extraction@text"></attribute-link>
 
-  <attribute-link source="youtube-search@video-url" target="smart-video@youtube-url"></attribute-link>
-  <attribute-link source="smart-video@text" target="semantic-extraction@text"></attribute-link>
+  <attribute-link source="semantic-extraction@location"     target="google-geocoder.g1@address"></attribute-link>
 
-  <attribute-link source="semantic-extraction@location" target="google-geocoder.g1@address"></attribute-link>
-
-  <attribute-link source="semantic-extraction@person" target="google-images@query"></attribute-link>
+  <attribute-link source="semantic-extraction@person"       target="google-images@query"></attribute-link>
 
   <attribute-link source="semantic-extraction@organization" target="wikipedia-extract@query"></attribute-link>
-  <attribute-link source="wikipedia-extract@query" target="twitter-tweets@query"></attribute-link>
+  <attribute-link source="wikipedia-extract@query"          target="twitter-tweets@query"></attribute-link>
 
 </body>
 </html>
