@@ -13,6 +13,10 @@
         target: {
           type: String,
           reflectToAttribute: true
+        },
+        transformation: {
+          type: String,
+          reflectToAttribute: true
         }
       },
       created: function() {
@@ -37,6 +41,7 @@
         for (var r in records) {
           if (records[r].attributeName === property) {
             var val = records[r].target.getAttribute(property);
+            if (this.transformation) val = (function(source) { return eval(this.transformation); }).call(this, val);
             var t = this.parseConnectionString(this.target);
             if (!t) return;
             var elements = document.querySelectorAll(t.selector);
