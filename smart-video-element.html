@@ -64,7 +64,7 @@
     Polymer({
       is: 'smart-video',
       behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
-      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/smart-video-element.html',
+      fileLocation: 'http://vsr-demo.informatik.tu-chemnitz.de/smartcomposition/icwe2015/smart-video-element.html',
       properties: {
         currentTime: {
           type: Number,
@@ -132,7 +132,7 @@
             s.type = 'video/mp4';
             Polymer.dom(_this).appendChild(s);
             var t = document.createElement('track');
-            t.src = 'http://apfel.informatik.tu-chemnitz.de/chrooma/YouTubeCaptionGrabber/YouTubeCaptionService/GetCaption.ashx?v=' + videoId;
+            t.src = 'http://vsr-demo.informatik.tu-chemnitz.de/chroomaplus/YouTubeCaptionService/GetCaption.ashx?v=' + videoId;
             t.kind = 'metadata';
             Polymer.dom(_this).appendChild(t);
           }
