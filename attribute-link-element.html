@@ -26,34 +26,38 @@
         var i;
         for (i in this.mutationObservers) {
           this.mutationObservers[i].disconnect();
+          this.mutationObservers[i] = null;
+          delete this.mutationObservers[i];
         }
         this.mutationObservers = [];
         var t = this.parseConnectionString(this.source);
         if (!t) return;
         var elements = document.querySelectorAll(t.selector);
         for (i = 0, c = elements.length; i < c; i++) {
-          var mutationObserver = new MutationObserver(this.handlePropertyChange.bind(this, t.property));
-          mutationObserver.observe(elements[i], { attributes: true });
+          var mutationObserver = new MutationObserver(this.handleAttributeChange.bind(this, t.attribute));
+          mutationObserver.observe(elements[i], { attributes: true, attributeFilter: [t.attribute] });
           this.mutationObservers.push(mutationObserver);
         }
       },
-      handlePropertyChange: function(property, records) {
+      handleAttributeChange: function(attribute, records) {
         for (var r in records) {
-          if (records[r].attributeName === property) {
-            var val = records[r].target.getAttribute(property);
+          if (records[r].attributeName === attribute) {
+            var val = records[r].target.getAttribute(attribute);
             if (this.transformation) val = (function(source) { return eval(this.transformation); }).call(this, val);
             var t = this.parseConnectionString(this.target);
             if (!t) return;
+            var m = document.querySelector('messaging-service');
+            if (m) m.sendMessage('message', { type: 'attributeChange', data: { selector: t.selector, attribute: t.attribute, value: val }});
             var elements = document.querySelectorAll(t.selector);
             for (var i = 0, c = elements.length; i < c; i++) {
-              if (val !== elements[i].getAttribute(t.property)) elements[i].setAttribute(t.property, val);
+              if (val !== elements[i].getAttribute(t.attribute)) elements[i].setAttribute(t.attribute, val);
             }
           }
         }
       },
       parseConnectionString: function(str) {
         var p = str.lastIndexOf('@');
-        return (p < 0) ? null : { selector: str.substr(0, p), property: str.substr(p+1) };
+        return (p < 0) ? null : { selector: str.substr(0, p), attribute: str.substr(p+1) };
       }
     });
   </script>
