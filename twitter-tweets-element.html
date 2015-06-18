@@ -1,4 +1,5 @@
 <dom-module id="twitter-tweets">
+
   <style>
     :host {
       display: inline-block;
@@ -17,6 +18,7 @@
       padding-right: .5em;
     }
   </style>
+
   <template>
     <div id="container">
       <content></content>
@@ -28,61 +30,60 @@
       </template>
     </div>
   </template>
-</dom-module>
 
-<script defer src="../SmartComposition/xhrq.js"></script>
-
-<script>
-  Polymer({
-    is: 'twitter-tweets',
-    behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
-    fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/twitter-tweets-element.html',
-    properties: {
-      count: {
-        type: Number,
-        value: 4,
-        reflectToAttribute: true
+  <script>
+    Polymer({
+      is: 'twitter-tweets',
+      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/twitter-tweets-element.html',
+      properties: {
+        count: {
+          type: Number,
+          value: 4,
+          reflectToAttribute: true
+        },
+        language: {
+          type: String,
+          value: 'en',
+          reflectToAttribute: true
+        },
+        query: {
+          type: String,
+          reflectToAttribute: true
+        }
       },
-      language: {
-        type: String,
-        value: 'en',
-        reflectToAttribute: true
+      observers: [
+        'propsChanged(count, language, query)'
+      ],
+      propsChanged: function() {
+        this.query && this.getTweets();
       },
-      query: {
-        type: String,
-        reflectToAttribute: true
-      }
-    },
-    observers: [
-      'propsChanged(count, language, query)'
-    ],
-    propsChanged: function() {
-      this.query && this.getTweets();
-    },
-    getTweets: function() {
-      var _this = this;
-      var re = new RegExp('(' + this.query + ')', 'ig');
-      window.xhrq.get('https://api.twitter.com/1.1/search/tweets.json', function(tweets) {
-        _this.tweets = tweets && tweets.statuses || [];
-        _this.tweets.forEach(function(tweet) {
-          tweet.parts = tweet.text.split(re).map(function(part) {
-            return { text: part, highlight: part.toLowerCase() === _this.query.toLowerCase() ? 'highlight' : ''};
+      getTweets: function() {
+        var _this = this;
+        var re = new RegExp('(' + this.query + ')', 'ig');
+        window.xhrq.get('https://api.twitter.com/1.1/search/tweets.json', function(tweets) {
+          _this.tweets = tweets && tweets.statuses || [];
+          _this.tweets.forEach(function(tweet) {
+            tweet.parts = tweet.text.split(re).map(function(part) {
+              return { text: part, highlight: part.toLowerCase() === _this.query.toLowerCase() ? 'highlight' : ''};
+            });
           });
-        });
-      }, {
-        q: this.query,
-        lang: this.language || 'en',
-        count: this.count || 4
-      }, 'json');
-    },
-    attached: function() {
-      this.subscribe('tweets', this.queryReceived);
-    },
-    detached: function() {
-      this.unsubscribe('tweets', this.queryReceived);
-    },
-    queryReceived: function(message) {
-      if (typeof message.data === 'string') this.query = message.data;
-    }
-  });
-</script>
+        }, {
+          q: this.query,
+          lang: this.language || 'en',
+          count: this.count || 4
+        }, 'json');
+      },
+      attached: function() {
+        this.subscribe('tweets', this.queryReceived);
+      },
+      detached: function() {
+        this.unsubscribe('tweets', this.queryReceived);
+      },
+      queryReceived: function(message) {
+        if (typeof message.data === 'string') this.query = message.data;
+      }
+    });
+  </script>
+
+</dom-module>
