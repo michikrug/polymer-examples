@@ -14,8 +14,8 @@
 
   <template>
     <div id="container">
-      <template is="dom-repeat" items="{{results}}" as="result">
-        <img style="width:100%;" src="{{result.url}}" onerror="(navigator.userAgent.toLowerCase().indexOf('firefox') === -1) && this.parentNode.removeChild(this);">
+      <template is="dom-repeat" items="{{images}}" as="image">
+        <img style="width:100%;" src="{{image.url}}" onerror="(navigator.userAgent.toLowerCase().indexOf('firefox') === -1) && this.parentNode.removeChild(this);">
       </template>
     </div>
   </template>
@@ -31,9 +31,10 @@
           value: 4,
           reflectToAttribute: true
         },
-        results: {
-          type: String,
-          notify: true
+        images: {
+          type: Object,
+          notify: true,
+          reflectToAttribute: true
         },
         query: {
           type: String,
@@ -46,7 +47,7 @@
       queryChanged: function() {
         var _this = this;
         window.xhrq.get('https://ajax.googleapis.com/ajax/services/search/images?v=1.0', function(data) {
-          _this.results = data.responseData && data.responseData.results || [];
+          _this.images = data.responseData && data.responseData.results || [];
         }, { q: this.query, rsz: this.count }, 'json');
       },
       attached: function() {
