@@ -50,6 +50,11 @@
         query: {
           type: String,
           reflectToAttribute: true
+        },
+        tweets: {
+          type: Object,
+          notify: true,
+          reflectToAttribute: true
         }
       },
       observers: [
