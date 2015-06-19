@@ -30,12 +30,18 @@
           type: String,
           reflectToAttribute: true,
           observer: 'queryChanged'
+        },
+        extract: {
+          type: String,
+          reflectToAttribute: true,
+          notify: true
         }
       },
       queryChanged: function() {
         var _this = this;
         window.xhrq.get('http://en.wikipedia.org/w/api.php?action=query&redirects', function(data) {
-          _this.$.container.innerHTML = data.query.pages[Object.keys(data.query.pages)[0]].extract || '';
+          _this.extract = data.query.pages[Object.keys(data.query.pages)[0]].extract || '';
+          _this.$.container.innerHTML = _this.extract;
         }, {
           titles: this.query,
           prop: 'extracts',
