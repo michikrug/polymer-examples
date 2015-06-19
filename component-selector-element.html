@@ -2,7 +2,7 @@
 
   <template>
     New component:
-    <select id="list"></select>
+    <select id="list" on-change="setValue"></select>
     <button on-click="addComponent">Add</button>
   </template>
 
@@ -11,19 +11,26 @@
         is: 'component-selector',
         fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/component-selector-element.html',
         properties: {
-          
+          value: {
+            type: String,
+            notify: true,
+            reflectToAttribute: true
+          }
+        },
+        setValue: function() {
+          this.value = this.$.list.value;
         },
         attached: function() {
-          var o = Polymer.dom(this).children;
+          var o = Polymer.dom(this).querySelectorAll('option');
           var s = this.$.list;
+          this.value = o[0].getAttribute('value');
           for (var i = 0; i < o.length; i++) {
-            if (o[i].nodeName === 'OPTION') {
-              s.appendChild(document.importNode(o[i], true));
-            }
+            s.appendChild(document.importNode(o[i], true));
+            if (o[i].getAttribute('selected')) this.value = o[i].getAttribute('value');
           }
         },
         addComponent: function() {
-          var e = document.createElement(this.$.list.value);
+          var e = document.createElement(this.value);
           e.style.height = e.style.width = '400px';
           document.body.appendChild(e);
         }
