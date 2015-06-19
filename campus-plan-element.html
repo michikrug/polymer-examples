@@ -22,9 +22,13 @@
       properties: {
         room: {
           type: String,
-          notify: true,
           reflectToAttribute: true,
           observer: 'roomChanged'
+        }, 
+        roomImageUrl: {
+          type: String,
+          notify: true,
+          reflectToAttribute: true
         }
       },
       attached: function() {
