@@ -18,6 +18,11 @@
           type: String,
           reflectToAttribute: true,
           observer: 'transformationChanged'
+        },
+        noLocalLink: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
         }
       },
       created: function() {
@@ -58,6 +63,7 @@
         if (!target) return;
         if (this.transformation) value = this.transformationFunction.call(this, value);
         this.fire('linkedAttributeChanged', { selector: target.selector, attribute: target.attribute, value: value });
+        if (this.noLocalLink) return;
         var elements = document.querySelectorAll(target.selector);
         for (var i = 0, c = elements.length; i < c; i++) {
           if (value !== elements[i].getAttribute(target.attribute)) elements[i].setAttribute(target.attribute, value);
