@@ -73,6 +73,12 @@
           reflectToAttribute: true,
           observer: 'currentTimeChanged'
         },
+        volume: {
+          type: Number,
+          notify: true,
+          reflectToAttribute: true,
+          observer: 'volumeChanged'
+        },
         youtubeUrl: {
           type: String,
           reflectToAttribute: true,
@@ -93,8 +99,11 @@
           this.currentTime = this.$.video.duration;
           return;
         }
-        if (this._videoReady && this.$.video.paused) this.$.video.currentTime = this.currentTime;
+        if (this._videoReady && this.$.video.paused && this.$.video.currentTime !== this.currentTime) this.$.video.currentTime = this.currentTime;
         this.publish('time', this.currentTime);
+      },
+      volumeChanged: function() {
+        if (this.$.video.volume !== this.volume) this.$.video.volume = this.volume;
       },
       created: function() {
         this._videoReady = false;
@@ -201,6 +210,10 @@
           this.addEventListener('timeupdate', function() {
             _this.currentTime = this.currentTime;
             if (_this._isFirefox && textTrack) _this.cueChanged.bind(textTrack)();
+          });
+
+          this.addEventListener('volumechange', function() {
+            _this.volume = this.volume;
           });
 
           if (_this.currentTime > 0) {
