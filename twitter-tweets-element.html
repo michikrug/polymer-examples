@@ -67,12 +67,13 @@
         var _this = this;
         var re = new RegExp('(' + this.query + ')', 'ig');
         window.xhrq.get('https://api.twitter.com/1.1/search/tweets.json', function(tweets) {
-          _this.tweets = tweets && tweets.statuses || [];
-          _this.tweets.forEach(function(tweet) {
+          var statuses = tweets && tweets.statuses || [];
+          statuses.forEach(function(tweet) {
             tweet.parts = tweet.text.split(re).map(function(part) {
               return { text: part, highlight: part.toLowerCase() === _this.query.toLowerCase() ? 'highlight' : ''};
             });
           });
+          _this.tweets = statuses;
         }, {
           q: this.query,
           lang: this.language || 'en',
