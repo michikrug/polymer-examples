@@ -63,7 +63,7 @@
 
     Polymer({
       is: 'smart-video',
-      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      behaviors: [Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/smart-video-element.html',
       properties: {
         currentTime: {
@@ -84,7 +84,22 @@
           reflectToAttribute: true,
           observer: 'youtubeUrlChanged'
         },
-        text: {
+        text_en: {
+          type: String,
+          reflectToAttribute: true,
+          notify: true
+        },
+        text_de: {
+          type: String,
+          reflectToAttribute: true,
+          notify: true
+        },
+        text_fr: {
+          type: String,
+          reflectToAttribute: true,
+          notify: true
+        },
+        text_es: {
           type: String,
           reflectToAttribute: true,
           notify: true
@@ -100,7 +115,6 @@
           return;
         }
         if (this._videoReady && this.$.video.paused && this.$.video.currentTime !== this.currentTime) this.$.video.currentTime = this.currentTime;
-        this.publish('time', this.currentTime);
       },
       volumeChanged: function() {
         if (this.$.video.volume !== this.volume) this.$.video.volume = this.volume;
@@ -111,12 +125,6 @@
       },
       attached: function() {
         this.initVideo();
-        //this.subscribe('time', this.timeReceived);
-        this.subscribe('youtube-video', this.ytReceived);
-      },
-      detached: function() {
-        //this.unsubscribe('time', this.timeReceived);
-        this.unsubscribe('youtube-video', this.ytReceived);
       },
       youtubeUrlChanged: function() {
         var _this = this, videoUrl = this.youtubeUrl, videoId;
@@ -191,13 +199,10 @@
               var props = entry.properties;
               if (type === 'image' || type === 'wiki' || type === 'tweets' || type === 'coordinates') _this.publish(type, props.data);
               if (type === 'subtitle') {
-                _this.text = props.text_en || props['text_en-US'] || props['text_en-GB'];
-                if (props.text_de) _this.publish('text_de', props.text_de);
-                if (props.text_en) _this.publish('text_en', props.text_en);
-                if (props.text_fr) _this.publish('text_fr', props.text_fr);
-                if (props.text_es) _this.publish('text_es', props.text_es);
-                if (props['text_en-US']) _this.publish('text_en', props['text_en-US']);
-                if (props['text_en-GB']) _this.publish('text_en', props['text_en-GB']);
+                _this.text_en = props.text_en || props['text_en-US'] || props['text_en-GB'];
+                _this.text_de = props.text_de;
+                _this.text_fr = props.text_fr;
+                _this.text_es = props.text_es;
               }
             });
             if (_this._isFirefox) _this.activeCues.push(cue);
@@ -233,14 +238,6 @@
           textTrack.mode = 'hidden';
           if (!_this._isFirefox) textTrack.addEventListener('cuechange', _this.cueChanged);
         });
-      },
-      ytReceived: function(message) {
-        this.youtubeUrl = message.data;
-      },
-      timeReceived: function(message) {
-        if (parseInt(message.data) > 0 && this._videoReady) {
-          this.$.video.currentTime = parseInt(message.data);
-        }
       }
     });
   })();
