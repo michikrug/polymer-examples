@@ -1,35 +1,37 @@
-<polymer-element name="webcal-events" attributes="date">
-  <template>
-    <style>
-      :host {
+<dom-module id="webcal-events">
+
+  <style>
+    :host {
         display: inline-block;
-      }
-      #container {
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        position: relative;
-        text-align: left;
-      }
-      h4 {
-        margin: .5em 0;
-      }
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-      ul li {
-        padding: .5em 0;
-        border-bottom: 1px solid silver;
-      }
-      ul li:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-      }
-    </style>
+    }
+    #container {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      position: relative;
+      text-align: left;
+    }
+    h4 {
+      margin: .5em 0;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    ul li {
+      padding: .5em 0;
+      border-bottom: 1px solid silver;
+    }
+    ul li:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  </style>
+
+  <template>
     <div id="container">
-      <h4>Events on {{date}}</h4>
+      <h4>Events on <span>{{date}}</span></h4>
       <ul>
         <template repeat="{{event in events}}">
           <li>{{event.dtstart[0].localTimeFormatted}} - {{event.dtend[0].localTimeFormatted}}: {{event.summary[0].value}}</li>
@@ -37,7 +39,7 @@
       </ul>
     </div>
   </template>
-  <script defer src="../SmartComposition/xhrq.js"></script>
+
   <script>
     (function() {
       var Ical = function Ical() {
@@ -139,13 +141,29 @@
       };
 
       Polymer({
-        isSmartComponent: true,
-        isInteractive: true,
-        isDraggable: true,
-        publish: {
-          events: { value: [] },
-          dataSource: { value: '' },
-          date: { value: (new Date()).toDateString(), reflect: true }
+        is: 'webcal-events',
+        fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/webcal-events-element.html',
+        properties: {
+          date: {
+            type: String,
+            value: (new Date()).toDateString(),
+            notify: true,
+            reflectToAttribute: true,
+            observer: 'dateChanged'
+          },
+          dataSource: {
+            type: String,
+            value: '',
+            notify: true,
+            reflectToAttribute: true,
+            observer: 'dataSourceChanged'
+          },
+          events: {
+            type: Object,
+            value: [],
+            notify: true,
+            reflectToAttribute: true
+          }
         },
         dateChanged: function() {
           var dayStart = new Date((new Date(this.date)).toDateString());
@@ -160,11 +178,12 @@
           this.events = events;
         },
         dataSourceChanged: function() {
+          if (!this.isAttached) return;
           var _this = this;
           window.xhrq.get(this.dataSource, function(data) {
             icalParser.parseIcal(data);
             _this.ical = icalParser.icals[0];
-            _this.ical.events.sort(function(a,b) { return a.dtstart[0].date > b.dtstart[0].date; });
+            _this.ical && _this.ical.events.sort(function(a,b) { return a.dtstart[0].date > b.dtstart[0].date; });
             _this.dateChanged();
           });
         },
@@ -173,7 +192,6 @@
           this._src_observer = new MutationObserver(function(mutations) {
             _this.dataSource = mutations[0].target.getAttribute('src');
           });
-          this._pubsub_subscribe('date', this.dateReceived);
         },
         attached: function() {
           var ds = this.querySelector('data-source');
@@ -183,11 +201,9 @@
         },
         detached: function() {
           this._src_observer && this._src_observer.disconnect();
-        },
-        dateReceived: function(message) {
-          this.date = (new Date(message.data)).toDateString();
         }
       });
     })();
   </script>
-</polymer-element>
+
+</dom-module>
