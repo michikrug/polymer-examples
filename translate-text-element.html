@@ -3,13 +3,11 @@
   <script>
     Polymer({
       is: 'translate-text',
-      behaviors: [Polymer.SmartComponentBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/translate-text-element.html',
       properties: {
         from: {
           type: String,
           value: 'de',
-          observer: 'fromChanged',
           reflectToAttribute: true
         },
         to: {
@@ -19,8 +17,7 @@
         },
         text: {
           type: String,
-          reflectToAttribute: true,
-          observer: 'textChanged'
+          reflectToAttribute: true
         },
         translatedText: {
           type: String,
@@ -28,18 +25,9 @@
           reflectToAttribute: true
         }
       },
-      attached: function() {
-        if (this.from) this.subscribe('text_' + this.from, this.textReceived);
-      },
-      detached: function() {
-        if (this.from) this.unsubscribe('text_' + this.from, this.textReceived);
-      },
-      fromChanged: function(newVal, oldVal) {
-        if (this.isAttached) {
-          if (oldVal) this.unsubscribe('text_' + oldVal, this.textReceived);
-          if (newVal) this.subscribe('text_' + newVal, this.textReceived);
-        }
-      },
+      observers: [
+        'textChanged(from, to, text)'
+      ],
       created: function() {
         this.getToken();
       },
@@ -64,7 +52,7 @@
         window.xhrq.get('http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=', function(data) {
           if (~data.indexOf('ArgumentException')) {
             _this._accessToken = null;
-            _this.getToken(true, function() { _this.translateText(text, callback); });
+            _this.getToken(true, function() { this.translateText(text, callback); });
             return;
           }
           callback.call(_this, data);
@@ -76,11 +64,7 @@
         }, 'json');
       },
       textChanged: function() {
-        this.translateText(this.text, function(data) { this.translatedText = data; this.publish('text_' + this.to, data); });
-      },
-      textReceived: function(message) {
-        if (typeof message.data !== 'string' || !this._accessToken) return;
-        this.text = message.data;
+        if (this.from && this.to && this.text) this.translateText(this.text, function(data) { this.translatedText = data; });
       }
     });
   </script>
