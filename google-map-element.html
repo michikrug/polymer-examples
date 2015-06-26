@@ -40,7 +40,7 @@
 
       Polymer({
         is: 'google-map',
-        behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+        behaviors: [Polymer.InteractionBehavior],
         fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-map-element.html',
         properties: {
           lat: {
@@ -67,37 +67,28 @@
           'positionChanged(lat, lng)'
         ],
         positionChanged: function() {
-          if (this._map) {
-            this._map.setCenter({ lat: this.lat, lng: this.lng });
-            this.address = null;
-          }
+          this._map && this._map.setCenter({ lat: this.lat, lng: this.lng });
         },
         zoomChanged: function() {
           this._map && this._map.setZoom(this.zoom);
         },
         created: function() {
-          var _this = this;
-
-          window.addEventListener('gmapsLoaded', function() {
-            _this.createMap();
-          });
+          window.addEventListener('gmapsLoaded',  this.createMap.bind(this));
 
           if (typeof google !== 'object' || !google.maps) {
             loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
           }
 
-          this._style_observer = new MutationObserver(function(mutations) {
+          this._style_observer = new MutationObserver(function() {
             Polymer.Base.fire('resize', null, {node: _this.$.gmap, bubbles: false});
           });
         },
         attached: function() {
-          this._style_observer.observe(this, { attributes : true, attributeFilter : ['style'] });
+          this._style_observer.observe(this, { attributes: true, attributeFilter: ['style'] });
           this.createMap();
-          this.subscribe('coordinates', this.coordinatesReceived);
         },
         detached: function() {
           this._style_observer.disconnect();
-          this.unsubscribe('coordinates', this.coordinatesReceived);
         },
         createMap: function() {
           var _this = this, gmap = this.$.gmap;
@@ -105,13 +96,10 @@
 
           this._map = new google.maps.Map(gmap, { zoom: this.zoom, disableDefaultUI: true, mapTypeControl: true });
 
-          if (this.address) this.queryAddress(this.address);
-
           google.maps.event.addListener(this._map, 'drag', function() {
             var center = this.getCenter();
             _this.lat = center.lat();
             _this.lng = center.lng();
-            _this.publish('coordinates', { lat: _this.lat, lng: _this.lng });
           });
 
           google.maps.event.addListener(this._map, 'zoom_changed', function() {
@@ -128,10 +116,6 @@
           });
 
           this.fire('resize');
-        },
-        coordinatesReceived: function(message) {
-          if (message.data.lat) this.lat = message.data.lat;
-          if (message.data.lng) this.lng = message.data.lng;
         }
       });
   })();
