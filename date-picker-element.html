@@ -7,7 +7,7 @@
   </style>
 
   <template>
-    <input type="date" value="{{date}}" name="date">
+    <input type="date" value="{{date}}" name="date" on-change="dateChanged">
   </template>
 
   <script>
@@ -20,6 +20,9 @@
           notify: true,
           reflectToAttribute: true
         }
+      },
+      dateChanged: function(e) {
+        this.date = e.target.value;
       },
       attached: function() {
         if (!this.date) {
