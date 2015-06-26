@@ -24,7 +24,7 @@
       margin-bottom: 5px;
     }
     #container ul > li {
-      height: 100px;
+      height: 90px;
       clear: both;
       cursor: pointer;
     }
@@ -38,7 +38,7 @@
       <content></content>
       <ul>
       <template is="dom-repeat" items="{{videos}}" as="video">
-        <li on-click="publishVideo" data-video-id$="{{video.id.videoId}}"><img src="{{video.snippet.thumbnails.high.url}}"><span>{{video.snippet.title}}</span></li>
+        <li on-click="setVideoUrl" data-video-id$="{{video.id.videoId}}"><img src="{{video.snippet.thumbnails.high.url}}"><span>{{video.snippet.title}}</span></li>
       </template>
       </ul>
     </div>
@@ -47,12 +47,12 @@
   <script>
     Polymer({
       is: 'youtube-search',
-      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      behaviors: [Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/youtube-search-element.html',
       properties: {
         count: {
           type: Number,
-          value: 5,
+          value: 3,
           reflectToAttribute: true
         },
         query: {
@@ -76,9 +76,9 @@
       propsChanged: function() {
         this.query && this.getVideos();
       },
-      publishVideo: function(e) {
-        this.videoUrl = 'https://www.youtube.com/watch?v=' + e.target.getAttribute('data-video-id');
-        this.publish('youtube-video', this.videoUrl);
+      setVideoUrl: function(e) {
+        var c = e.target.nodeName === 'LI' ? e.target : e.target.parentNode;
+        this.videoUrl = 'https://www.youtube.com/watch?v=' + c.getAttribute('data-video-id');
       },
       getVideos: function() {
         var _this = this;
@@ -87,21 +87,12 @@
         }, {
           part: 'snippet',
           q: this.query,
-          maxResults: this.count || 5,
+          maxResults: this.count || 3,
           type: 'video',
           videoEmbeddable: true,
           videoCaption: 'closedCaption',
           relevanceLanguage: 'en'
         }, 'json');
-      },
-      attached: function() {
-        this.subscribe('search', this.queryReceived);
-      },
-      detached: function() {
-        this.unsubscribe('search', this.queryReceived);
-      },
-      queryReceived: function(message) {
-        if (typeof message.data === 'string') this.query = message.data;
       }
     });
   </script>
