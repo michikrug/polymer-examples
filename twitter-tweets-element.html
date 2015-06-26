@@ -34,7 +34,7 @@
   <script>
     Polymer({
       is: 'twitter-tweets',
-      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      behaviors: [Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/twitter-tweets-element.html',
       properties: {
         count: {
@@ -79,15 +79,6 @@
           lang: this.language || 'en',
           count: this.count || 4
         }, 'json');
-      },
-      attached: function() {
-        this.subscribe('tweets', this.queryReceived);
-      },
-      detached: function() {
-        this.unsubscribe('tweets', this.queryReceived);
-      },
-      queryReceived: function(message) {
-        if (typeof message.data === 'string') this.query = message.data;
       }
     });
   </script>
