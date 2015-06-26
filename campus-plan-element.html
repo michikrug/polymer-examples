@@ -17,7 +17,7 @@
   <script>
     Polymer({
       is: 'campus-plan',
-      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      behaviors: [Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/campus-plan-element.html',
       properties: {
         room: {
@@ -31,12 +31,6 @@
           reflectToAttribute: true
         }
       },
-      attached: function() {
-        this.subscribe('room', this.roomReceived);
-      },
-      detached: function() {
-        this.unsubscribe('room', this.roomReceived);
-      },
       roomChanged: function() {
         this.getRoomImage();
       },
@@ -46,9 +40,6 @@
           var p = data.substr(data.lastIndexOf('kartezeichnen.php?'));
           _this.roomImageUrl = 'https://www.tu-chemnitz.de/tu/lageplan/campusfinder/' + p.substr(0, p.indexOf('"'));
         });
-      },
-      roomReceived: function(message) {
-        if (typeof message.data === 'string') this.room = message.data;
       }
     });
   </script>
