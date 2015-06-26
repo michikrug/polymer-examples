@@ -10,6 +10,8 @@
 
   <link rel="import" href="../SmartComposition/SmartComponent.html">
   <link rel="import" href="../SmartComposition/MessagingService.html">
+
+
   <link rel="import" href="../SmartComposition/AttributeLink.html">
 
   <script>
@@ -119,22 +121,21 @@
   <translate-text from="de" to="en"></translate-text>
   <semantic-extraction></semantic-extraction>
 
-  <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000">
-    <attribute-link source="google-geocoder.g1@lat"           target="google-map.g1@lat" transformation="parseFloat(source) + 0"></attribute-link>
-    <attribute-link source="google-geocoder.g1@coordinates"   target="google-map.g1@lng" transformation="(JSON.parse(source)).lng"></attribute-link>
-  </messaging-service>
-
   <attribute-link source="google-map.g1@lat"                  target="google-map.g2@lat"></attribute-link>
   <attribute-link source="google-map.g1@lng"                  target="google-map.g2@lng"></attribute-link>
 
-  <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000" session="test">
+  <messaging-service endpoint="http://apfel.informatik.tu-chemnitz.de:9000">
+    <attribute-link source="google-geocoder.g1@lat"           target="google-map.g1@lat" transformation="parseFloat(source) + 0"></attribute-link>
+    <attribute-link source="google-geocoder.g1@coordinates"   target="google-map.g1@lng" transformation="(JSON.parse(source)).lng"></attribute-link>
+
     <attribute-link source="google-geocoder.g2@lat"           target="google-map.g2@lat" no-local-link></attribute-link>
     <attribute-link source="google-geocoder.g2@lng"           target="google-map.g2@lng" no-local-link></attribute-link>
 
     <attribute-link source="translate-text[to='en']@translated-text" target="semantic-extraction@text"></attribute-link>
     <attribute-link source="nytimes-news@text"                target="semantic-extraction@text"></attribute-link>
     <attribute-link source="smart-video@text"                 target="semantic-extraction@text"></attribute-link>
-  
+    <attribute-link source="smart-video@text"                 target="plain-text@data"></attribute-link>
+
     <attribute-link source="youtube-search@video-url"         target="smart-video@youtube-url"></attribute-link>
 
     <attribute-link source="semantic-extraction@location"     target="youtube-search@query"></attribute-link>
