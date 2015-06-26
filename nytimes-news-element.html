@@ -55,7 +55,7 @@
   <script>
     Polymer({
       is: 'nytimes-news',
-      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      behaviors: [Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/nytimes-news-element.html',
       properties: {
         feed: {
@@ -80,7 +80,6 @@
       publishText: function(e) {
         var c = e.target.nodeName === 'LI' ? e.target.children[1] : e.target.nextSibling;
         this.text = c.textContent;
-        this.publish('text_en', this.text);
       },
       getNews: function() {
         var _this = this;
