@@ -1,30 +1,36 @@
-<polymer-element name="my-counter" attributes="counter">
+<dom-module id="my-counter">
+
+  <style>
+    :host {
+      display: inline-block;
+    }
+  </style>
+
   <template>
-    <style>:host { display: inline-block; }</style>
     <div id="label"><content></content></div>
     Value: <span id="counterVal">{{counter}}</span><br>
-    <button on-tap="{{increment}}">Increment</button>
+    <button on-tap="increment">Increment</button>
   </template>
+
   <script>
     Polymer({
-      isSmartComponent: true,
-      counter: 0, // Default value
-      publish: {
-        counter: { reflect: true }
-      },
-      created: function() {
-        this._pubsub_subscribe('counter', this.setCounter);
+      is: 'my-counter',
+      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/my-counter-element.html',
+      properties: {
+        counter: {
+          type: Number,
+          value: 0,
+          notify: true,
+          reflectToAttribute: true
+        }
       },
       counterChanged: function() {
         this.$.counterVal.classList.add('highlight');
       },
       increment: function() {
         this.counter++;
-        this._pubsub_publish('counter', this.counter);
-      },
-      setCounter: function(message) {
-        this.counter = message.data;
       }
     });
   </script>
-</polymer-element>
+
+</dom-module>
