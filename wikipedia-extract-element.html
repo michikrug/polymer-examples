@@ -23,7 +23,7 @@
   <script>
     Polymer({
       is: 'wikipedia-extract',
-      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      behaviors: [Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/wikipedia-extract-element.html',
       properties: {
         query: {
@@ -48,15 +48,6 @@
           exintro: '',
           format: 'json'
         }, 'json');
-      },
-      attached: function() {
-        this.subscribe('wiki', this.queryReceived);
-      },
-      detached: function() {
-        this.unsubscribe('wiki', this.queryReceived);
-      },
-      queryReceived: function(message) {
-        if (typeof message.data === 'string') this.query = message.data;
       }
     });
   </script>
