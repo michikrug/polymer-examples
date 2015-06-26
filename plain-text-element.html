@@ -23,33 +23,14 @@
   <script>
     Polymer({
       is: 'plain-text',
-      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+      behaviors: [Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/plain-text-element.html',
       properties: {
-        subscription: {
-          type: String,
-          value: 'text_en',
-          reflectToAttribute: true,
-          observer: 'subscriptionChanged'
-        },
         data: {
-          type: Object
+          type: Object,
+          notify: true,
+          reflectToAttribute: true
         }
-      },
-      subscriptionChanged: function(newVal, oldVal) {
-        if (this.isAttached) {
-          this.unsubscribe(oldVal, this.messsageReceived);
-          this.subscribe(newVal, this.messsageReceived);
-        }
-      },
-      attached: function() {
-        this.subscribe(this.subscription, this.messsageReceived);
-      },
-      detached: function() {
-        this.unsubscribe(this.subscription, this.messsageReceived);
-      },
-      messsageReceived: function(message) {
-        this.data = message.data;
       }
     });
   </script>
