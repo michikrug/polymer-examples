@@ -24,7 +24,6 @@
 
       Polymer({
         is: 'google-geocoder',
-        behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
         fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/google-geocoder-element.html',
         properties: {
           address: {
@@ -52,22 +51,10 @@
           this.address && this.queryAddress(this.address);
         },
         created: function() {
-          var _this = this;
-
-          window.addEventListener('gmapsLoaded', function() {
-            _this.initGeocoder();
-          });
-
+          window.addEventListener('gmapsLoaded', this.initGeocoder.bind(this));
           if (typeof google !== 'object' || !google.maps) {
             loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
           }
-        },
-        attached: function() {
-          this.subscribe('address', this.addressReceived);
-        },
-        detached: function() {
-          this._style_observer.disconnect();
-          this.unsubscribe('address', this.addressReceived);
         },
         initGeocoder: function() {
           if (typeof google !== 'object' || !google.maps) return;
@@ -86,14 +73,8 @@
               _this.lat = center.lat();
               _this.lng = center.lng();
               _this.coordinates = { lat: _this.lat, lng: _this.lng };
-              _this.publish('coordinates', { lat: _this.lat, lng: _this.lng });
             }
           });
-        },
-        addressReceived: function(message) {
-          if (typeof message.data === 'string') {
-            this.address = message.data;
-          }
         }
       });
   })();
