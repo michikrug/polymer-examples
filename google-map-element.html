@@ -79,9 +79,9 @@
             loadScript('//maps.googleapis.com/maps/api/js?sensor=false&callback=gmapsLoaded');
           }
 
-          this._style_observer = new MutationObserver(function() {
-            Polymer.Base.fire('resize', null, {node: _this.$.gmap, bubbles: false});
-          });
+          this._style_observer = new MutationObserver((function() {
+            Polymer.Base.fire('resize', null, {node: this.$.gmap, bubbles: false});
+          }).bind(this));
         },
         attached: function() {
           this._style_observer.observe(this, { attributes: true, attributeFilter: ['style'] });
