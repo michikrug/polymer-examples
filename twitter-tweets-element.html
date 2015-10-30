@@ -32,31 +32,50 @@
   </template>
 
   <script>
-    Polymer({
-      is: 'twitter-tweets',
-      behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
-      fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/twitter-tweets-element.html',
-      properties: {
-        count: {
-          type: Number,
-          value: 4,
-          reflectToAttribute: true
-        },
-        language: {
-          type: String,
-          value: 'en',
-          reflectToAttribute: true
-        },
-        query: {
-          type: String,
-          reflectToAttribute: true
-        },
-        tweets: {
-          type: Object,
-          notify: true,
-          reflectToAttribute: true
-        }
-      },
+	Polymer({
+		/**
+		 * Twitter-Element
+		 * 
+		 * @subscripe String tweets Suchquery für Twitter
+		 * @author Michael Krug 
+		 */
+		is: 'twitter-tweets',
+		behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
+		fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/twitter-tweets-element.html',
+		properties: {
+			/**
+			 *  Aktueller Zählerstand
+			 * @type Number
+			 */
+			count: {
+				type: Number,
+				value: 4,
+				reflectToAttribute: true
+			},
+			/**
+			 * Sprache 
+			 */
+			language: {
+				type: String,
+				value: 'en',
+				reflectToAttribute: true
+        	},
+			/**
+			 * Such-Query 
+			 */
+			query: {
+				type: String,
+				reflectToAttribute: true
+			},
+			/**
+			 * Tweets zum anzeigen
+			 */
+        	tweets: {
+				type: Object,
+				notify: true,
+				reflectToAttribute: true
+			}
+		},
       observers: [
         'propsChanged(count, language, query)'
       ],
@@ -80,9 +99,15 @@
           count: this.count || 4
         }, 'json');
       },
+	  /**
+	   * Startet Abonnemant der Topic "tweets" 
+	   */
       attached: function() {
         this.subscribe('tweets', this.queryReceived);
       },
+	  /**
+	   * Beendet Abonnemant des Topic "tweets"
+	   */
       detached: function() {
         this.unsubscribe('tweets', this.queryReceived);
       },
