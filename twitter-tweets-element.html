@@ -36,7 +36,7 @@
 		/**
 		 * Twitter-Element
 		 * 
-		 * @subscripe String tweets Suchquery für Twitter
+		 * @subscribe tweets String Suchquery für Twitter
 		 * @author Michael Krug 
 		 */
 		is: 'twitter-tweets',
@@ -44,7 +44,7 @@
 		fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/twitter-tweets-element.html',
 		properties: {
 			/**
-			 *  Aktueller Zählerstand
+			 * Aktueller Zählerstand
 			 * @type Number
 			 */
 			count: {
@@ -54,6 +54,7 @@
 			},
 			/**
 			 * Sprache 
+			 * @type String
 			 */
 			language: {
 				type: String,
@@ -62,6 +63,7 @@
         	},
 			/**
 			 * Such-Query 
+			 * @type String
 			 */
 			query: {
 				type: String,
@@ -69,6 +71,7 @@
 			},
 			/**
 			 * Tweets zum anzeigen
+			 * @type Object
 			 */
         	tweets: {
 				type: Object,
