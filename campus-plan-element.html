@@ -15,16 +15,27 @@
   </template>
 
   <script>
-    Polymer({
+	Polymer({
+		/**
+		* Stellt einen Campus plan dar
+		* 
+		* @subscribe room String Raum
+		*/
       is: 'campus-plan',
       behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/campus-plan-element.html',
       properties: {
+		  /**
+		   * Raum
+		   */
         room: {
           type: String,
           reflectToAttribute: true,
           observer: 'roomChanged'
         }, 
+		/**
+		 * Bild des Raumes
+		 */
         roomImageUrl: {
           type: String,
           notify: true,
@@ -47,6 +58,10 @@
           _this.roomImageUrl = 'https://www.tu-chemnitz.de/tu/lageplan/campusfinder/' + p.substr(0, p.indexOf('"'));
         });
       },
+	  /**
+	   * Raum empfangen
+	   * @type String Raumname
+	   */
       roomReceived: function(message) {
         if (typeof message.data === 'string') this.room = message.data;
       }
