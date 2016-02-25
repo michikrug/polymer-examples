@@ -2,21 +2,21 @@
 
   <script>
     Polymer({
-		/**
-		 * @publish {String} address Name einer Stadt, eines Bundesstaates, eines Landes oder eines Kontinentes
-		 * @publish {String} image Suchbegriff für Bilder
-		 * @publish {String} wiki Suchbegriff für einen Wiki-Artikel
-		 * @publish {String} search Suchbegriff für ein bestimmtes Thema
-		 * @publish {String} tweets Suchbegriff für Tweets zu einem bestimmten Thema
-		 */
+		  /**
+		   * @publish {String} address Name einer Stadt, eines Bundesstaates, eines Landes oder eines Kontinentes
+		   * @publish {String} image Suchbegriff für Bilder
+		   * @publish {String} wiki Suchbegriff für einen Wiki-Artikel
+		   * @publish {String} search Suchbegriff für ein bestimmtes Thema
+		   * @publish {String} tweets Suchbegriff für Tweets zu einem bestimmten Thema
+		   */
       is: 'semantic-extraction',
       behaviors: [Polymer.SmartComponentBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/semantic-extraction-element.html',
       apikey: 'b9543ff024368b60add72be32a27d69ad40b51fc',
       properties: {
-		  /**
-		   * @type String
-		   */
+		    /**
+		     * @type String
+		     */
         text: {
           type: String,
           reflectToAttribute: true,

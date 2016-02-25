@@ -36,7 +36,7 @@
 		/**
 		 * Twitter-Element
 		 * 
-		 * @subscribe {String} tweets  Suchquery für Twitter
+		 * @subscribe {String} tweets Suchquery für Twitter
 		 * @author Michael Krug 
 		 */
 		is: 'twitter-tweets',
@@ -73,7 +73,7 @@
 			 * Tweets zum anzeigen
 			 * @type Object
 			 */
-        	tweets: {
+      tweets: {
 				type: Object,
 				notify: true,
 				reflectToAttribute: true
@@ -102,15 +102,15 @@
           count: this.count || 4
         }, 'json');
       },
-	  /**
-	   * Startet Abonnemant der Topic "tweets" 
-	   */
+	    /**
+	     * Startet Abonnemant der Topic "tweets" 
+	     */
       attached: function() {
         this.subscribe('tweets', this.queryReceived);
       },
-	  /**
-	   * Beendet Abonnemant des Topic "tweets"
-	   */
+	    /**
+	     * Beendet Abonnemant des Topic "tweets"
+	     */
       detached: function() {
         this.unsubscribe('tweets', this.queryReceived);
       },

@@ -16,26 +16,26 @@
 
   <script>
 	Polymer({
-		/**
-		* Stellt einen Campus plan dar
-		* 
-		* @subscribe {String} room - Raumnummer
-		*/
+		  /**
+		   * Stellt einen Campus plan dar
+		   * 
+		   * @subscribe {String} room - Raumnummer
+		   */
       is: 'campus-plan',
       behaviors: [Polymer.SmartComponentBehavior, Polymer.InteractionBehavior],
       fileLocation: 'http://apfel.informatik.tu-chemnitz.de/polymer/polymer-examples/campus-plan-element.html',
       properties: {
   		  /**
-  		  * Raumnummer
-  		  */
+  		   * Raumnummer
+  		   */
         room: {
           type: String,
           reflectToAttribute: true,
           observer: 'roomChanged'
         }, 
     		/**
-    		* Url zum Bild des Raumes
-    		*/
+    		 * Url zum Bild des Raumes
+    		 */
         roomImageUrl: {
           type: String,
           notify: true,
@@ -59,10 +59,10 @@
         });
       },
       /**
-      * Raum empfangen
-      * 
-      * @param {String} message - message.data contains the room number
-      */
+       * Raum empfangen
+       * 
+       * @param {String} message - message.data contains the room number
+       */
       roomReceived: function(message) {
         if (typeof message.data === 'string') this.room = message.data;
       }
