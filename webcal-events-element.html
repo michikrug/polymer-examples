@@ -76,6 +76,7 @@
             ical.version = this.getValue('VERSION', cals[index]);
             ical.prodid = this.getValue('PRODID', cals[index]);
             cals[index] = cals[index].replace(/\r\n /g, '');
+            cals[index] = cals[index].replace(/\r\n\\n/g, '\\n');
             cals[index] = cals[index].replace(/BEGIN:VCALENDAR\r?\n/ig, '');
             var reg = /BEGIN:(V.*?)\r?\n(.*\r?\n)+?END:\1/gi;
             var matches = cals[index].match(reg);
@@ -139,6 +140,7 @@
       };
 
       Polymer({
+        is: 'webcal-events',
         isSmartComponent: true,
         isInteractive: true,
         isDraggable: true,
