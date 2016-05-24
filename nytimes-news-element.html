@@ -46,7 +46,7 @@
       <br><br>
       <ul>
       <template is="dom-repeat" items="{{newslist}}" as="news">
-        <li on-click="publishText"><span>{{news.title}}</span><span style="display:none">{{news.description}}</span></li>
+        <li on-click="publishText"><span data-title$="{{news.title}}" data-description$="{{news.description}}">{{news.title}}</span></li>
       </template>
       </ul>
     </div>
@@ -78,8 +78,8 @@
         this.feed = e.target.value;
       },
       publishText: function(e) {
-        var c = e.target.nodeName === 'LI' ? e.target.children[1] : e.target.nextSibling;
-        this.text = c.textContent;
+        var c = e.target.nodeName === 'LI' ? e.target.children[0] : e.target;
+        this.text = c.dataset.title + ' ' + c.dataset.description;
       },
       getNews: function() {
         var _this = this;
